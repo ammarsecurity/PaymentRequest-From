@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root {
+  font-family: Cairo, sans-serif;
+  --white: #ffffff;
+  --dark: #111115;
+  --primary: #213263;
+}
+* {
+  margin: 0;
+  padding: 0;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+  color: var(--dark);
+}
+a {
+  text-decoration: none;
+  color: var(--dark);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 2.2vmin;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border: 4px solid white;
+  border-radius: 25px;
+}
+@supports (scrollbar-color: var(--primary) var(--white)) {
+  * {
+    scrollbar-color: var(--primary) var(--dark);
+    scrollbar-width: thin;
+  }
+}
+
+/* -------------------------- Text Selection Color -------------------------- */
+::-moz-selection {
+  /* Code for Firefox */
+  color: var(--white);
+  background: var(--primary);
+}
+
+::selection {
+  color: var(--white);
+  background: var(--primary);
+}
+
+.sidebar-item {
+  @apply w-full rounded-full flex gap-3 hover:gap-4 py-3 px-6 duration-300 hover:bg-primary_container text-xl items-center;
+}
+
+.sidebar-item-icon {
+  @apply w-7 h-7;
+}
