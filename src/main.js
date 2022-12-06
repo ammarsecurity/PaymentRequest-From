@@ -10,7 +10,7 @@ import router from '@/router';
 
 // Axios
 import VueAxios from 'vue-axios';
-import axiosInstance from '@/api/axiosInstance';
+import { axiosInstance } from '@/api/axiosInstance';
 
 // Style
 import '@/style.css';

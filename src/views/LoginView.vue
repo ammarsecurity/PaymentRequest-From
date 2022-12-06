@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
-import axiosInstance from '@/api/axiosInstance.js';
+import { axiosInstance } from '@/api/axiosInstance.js';
 
 /* -------------------- Vee Validate -------------------- */
 const validationSchema = ref({

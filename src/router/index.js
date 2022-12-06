@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import axiosInstance from '@/api/axiosInstance';
+import { axiosInstance } from '@/api/axiosInstance';
 import i18n from '@/locales/i18n';
 
 /* ----------------------- Routes ----------------------- */

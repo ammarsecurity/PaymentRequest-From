@@ -1,11 +1,12 @@
 <script setup>
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
-import axiosInstance from '@/api/axiosInstance.js';
+import { axiosInstance, baseURL } from '@/api/axiosInstance.js';
 import { ref } from 'vue';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
 import { computed } from '@vue/reactivity';
+import printJS from 'print-js'
 
 /* -------------------- Vee Validate -------------------- */
 
@@ -136,6 +137,11 @@ const editStatusRequest = async (value) => {
     });
   return;
 };
+
+const print = async (id) => {
+
+  printJS({ printable: `${baseURL}Main/GetReport?id=${id}`, type: 'pdf', modalMessage: "جارا تجهيز الطباعة...", showModal: true })
+}
 
 const editSubmit = async (value) => {
   isLoading.value = true;
@@ -746,11 +752,15 @@ const isInfoModalOpen = ref(false);
                       class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer" @click="
                         editRequestInfo(index), (isEditModalOpen = true)
                       " />
+
                     <PhEye class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer"
                       @click="
                         showRequestInfo(index, item.status, item.id),
                         (isInfoModalOpen = true)
                       " />
+                    <PhPrinterDuotone @click="print(item.id)"
+                      v-if="(item.isFinished == true && item.requestLoction == 1 && role == 'Accounter')"
+                      class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer" />
                   </div>
 
                 </td>

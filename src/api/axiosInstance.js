@@ -2,6 +2,7 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import i18n from '@/locales/i18n';
+const baseURL = 'https://localhost:7219/api/';
 // Axios
 const axiosInstance = axios.create();
 axiosInstance.interceptors.response.use(
@@ -62,7 +63,7 @@ axiosInstance.interceptors.response.use(
 axiosInstance.interceptors.request.use(
   (config) => {
     let token = localStorage.getItem('token');
-    config.baseURL = 'https://localhost:7219/api/';
+    config.baseURL = baseURL;
     config.headers['Authorization'] = `Bearer ${token}`;
 
     return config;
@@ -71,5 +72,4 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error), (window.location.href = '/login');
   }
 );
-
-export default axiosInstance;
+export { axiosInstance, baseURL };

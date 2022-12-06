@@ -1,7 +1,7 @@
 <script setup>
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
-import axiosInstance from '@/api/axiosInstance.js';
+import { axiosInstance } from '@/api/axiosInstance.js';
 import { ref } from 'vue';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';

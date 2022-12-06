@@ -1,7 +1,7 @@
 <script setup>
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
-import axiosInstance from '@/api/axiosInstance.js';
+import { axiosInstance } from '@/api/axiosInstance.js';
 import { ref } from 'vue';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
@@ -30,7 +30,7 @@ const isEditSuccess = ref(false);
 const submit = async (value) => {
   isLoading.value = true;
   isError.value = false;
-  
+
   const formData = new FormData();
   formData.append('CompanyLogo', createUserForm.value.CompanyLogo);
   formData.append('FullName', createUserForm.value.Email);
@@ -41,7 +41,7 @@ const submit = async (value) => {
   axiosInstance
     .post('Main/AddUser', formData)
     .then(({ data }) => {
-    
+
       isLoading.value = false;
       isAddModalOpen.value = false;
       isAddSuccess.value = true;
@@ -61,7 +61,7 @@ const submit = async (value) => {
     .catch((error) => {
 
       console.log(error)
-     });
+    });
 
   return;
 };
@@ -88,7 +88,7 @@ const editUser = ref({
 const editSubmit = async (value) => {
   isLoading.value = true;
   isError.value = false;
-  
+
   const formData = new FormData();
   formData.append('CompanyLogo', editUser.value.CompanyLogo);
   formData.append('FullName', editUser.value.Email);
@@ -97,9 +97,9 @@ const editSubmit = async (value) => {
   formData.append('CompanyName', editUser.value.CompanyName);
   formData.append('Password', editUser.value.Password);
   axiosInstance
-    .post('Main/EditUser?id=' + editUser.value.id , formData)
+    .post('Main/EditUser?id=' + editUser.value.id, formData)
     .then(({ data }) => {
-    
+
       isLoading.value = false;
       isEditModalOpen.value = false;
       isEditSuccess.value = true;
@@ -118,7 +118,7 @@ const editSubmit = async (value) => {
         cancelButtonColor: '#213263',
         cancelButtonText: 'اغلاق',
       });
-     });
+    });
   return;
 };
 
@@ -153,7 +153,7 @@ const previousPage = () => {
 };
 
 const editUserInfo = (index) => {
-  const info =  users.value[index];
+  const info = users.value[index];
   editUser.value.FullName = info.fullName;
   editUser.value.UserRole = info.userRole;
   editUser.value.Email = info.email;
@@ -165,19 +165,19 @@ const editUserInfo = (index) => {
 var showAddOrder = false;
 var isUser = false;
 const role = localStorage.getItem('role');
-if(role == 'Accounter'){
- showAddOrder = false;
+if (role == 'Accounter') {
+  showAddOrder = false;
   isUser = false;
-}else if(role == 'User'){
+} else if (role == 'User') {
   showAddOrder = true;
   isUser = true;
 
-}else if(role == 'SupUser'){
+} else if (role == 'SupUser') {
   showAddOrder = true;
 
   isUser = false;
 
-}else if(role == 'CFO'){
+} else if (role == 'CFO') {
   showAddOrder = false;
   isUser = false;
 }
@@ -211,7 +211,7 @@ const deleteUser = async (value) => {
             (isLoading.value = false);
           getUsers();
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }
   });
   return;
@@ -272,7 +272,7 @@ const isEditModalOpen = ref(false);
         <ErrorMessage class="text-red-600 text-lg" name="Password" component="div"></ErrorMessage>
       </div>
 
-     
+
       <div class="flex flex-col gap-2" v-if="(isUser == false)">
         <label class="text-xl text-primary">الفئة</label>
         <Field
@@ -286,7 +286,7 @@ const isEditModalOpen = ref(false);
         <ErrorMessage class="text-red-600 text-lg" name="UserRole" component="div"></ErrorMessage>
       </div>
       <div class="flex flex-col gap-2" v-if="(isUser == false)">
-        <label class="text-xl text-primary" >اسم الشركة</label>
+        <label class="text-xl text-primary">اسم الشركة</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="CompanyName" v-model="createUserForm.CompanyName" type="text">
@@ -341,7 +341,7 @@ const isEditModalOpen = ref(false);
         <ErrorMessage class="text-red-600 text-lg" name="Password" component="div"></ErrorMessage>
       </div>
 
-     
+
       <div class="flex flex-col gap-2" v-if="(isUser == false)">
         <label class="text-xl text-primary">الفئة</label>
         <Field
@@ -422,7 +422,7 @@ const isEditModalOpen = ref(false);
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]">
                   {{ item.email }}
                 </td>
-               
+
                 <td class="xl:py-3 xl:px-6 py-2 px-4">
                   <h1
                     class="text-center xl:text-start bg-primary_container text-on_background max-w-max rounded-2xl px-2 py-2">
