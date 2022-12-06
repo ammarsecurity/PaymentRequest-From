@@ -24,7 +24,7 @@ onClickOutside(modal, close);
       class="bg-background_dark bg-opacity-50 fixed top-0 left-0 w-screen h-screen flex items-center justify-center z-[90]">
       <!-- Modal -->
       <div :class="styles"
-        class="flex flex-col items-end  w-full bg-background dark:bg-background_dark rounded-2xl max-h-[90vh] max-w-[90vw] overflow-y-auto overflow-x-hidden"
+        class="flex flex-col items-end bg-background dark:bg-background_dark rounded-2xl max-h-[90vh] max-w-[90vw] overflow-y-auto overflow-x-hidden"
         ref="modal" v-motion-pop>
         <div class="flex justify-between pt-6 px-6 w-full">
           <PhX

@@ -12,6 +12,7 @@ import NotFoundView from '@/views/NotFoundView.vue';
 
 import DashboardUsersView from '@/views/dashboard/DashboardUsersView.vue';
 import DashboardRequestView from '@/views/dashboard/DashboardRequestView.vue';
+import DashboardSubUserRequestView from '@/views/dashboard/DashboardSubUserRequestView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,7 +35,6 @@ const router = createRouter({
       component: LoginView,
     },
 
-
     // Dashboard
     {
       path: '/dashboard',
@@ -43,11 +43,15 @@ const router = createRouter({
       },
     },
 
- 
     {
       path: '/dashboard/users',
       name: 'dashboard-users',
       component: DashboardUsersView,
+    },
+    {
+      path: '/dashboard/supusersrequest',
+      name: 'dashboard-supusersrequest',
+      component: DashboardSubUserRequestView,
     },
     {
       path: '/dashboard/request',

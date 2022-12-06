@@ -179,7 +179,7 @@ const getRequest = () => {
   isLoading.value = true;
   axiosInstance
     .get(
-      `Main/GetRequset?userRequest=${isUser}&PageNumber=${pageNumber.value}&PageSize=${pageSize.value}&date=${searchform.value.date}&companyName=${searchform.value.companyName}&requestNumber=${searchform.value.requestNumber}&status=${searchform.value.status}&fullName=${searchform.value.fullName}`
+      `Main/GetSupUserRequest?userRequest=${isUser}&PageNumber=${pageNumber.value}&PageSize=${pageSize.value}&date=${searchform.value.date}&companyName=${searchform.value.companyName}&requestNumber=${searchform.value.requestNumber}&status=${searchform.value.status}&fullName=${searchform.value.fullName}`
     )
     .then(({ data }) => {
       list.value = data.data;
@@ -519,8 +519,8 @@ const isInfoModalOpen = ref(false);
 
   <MainModal styles="w-[40vw] h-[70vh]" text="تفاصيل الطلب" v-if="isInfoModalOpen" @close="isInfoModalOpen = false">
     <div class="grid grid-cols-2 flex-col gap-16" dir="rtl">
-      <div class="flex flex-col col-span-2 gap-4">
-        <div class="flex flex-col gap-2" v-if="(role != 'SupUser' && role != 'User')">
+      <div class="flex flex-col col-span-2 gap-4" v-if="requeststatus == 'WaitForCompanyManger'">
+        <div class="flex flex-col gap-2">
           <label class="text-xl text-primary">الملاحظة</label>
           <Field
             class="border border-on_background_variant bg-background rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300"
@@ -530,16 +530,11 @@ const isInfoModalOpen = ref(false);
         </div>
         <div class="flex gap-4 w-full col-span-2">
 
-          <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForCFO')"
-            class="bg-green-600 border-none" text="الموافقة"></MainButton>
+          <MainButton v-if="role == 'User'" @click="editStatusRequest('Wait')" class="bg-green-600 border-none"
+            text="الموافقة"></MainButton>
 
-          <MainButton v-if="role == 'CFO'" @click="editStatusRequest('ApprovalFromCFO')"
-            class="bg-green-600 border-none" text="الموافقة"></MainButton>
-
-          <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForEdit')"
-            class="bg-orange-600 border-none" text="ارجاع لغرض التعديل"></MainButton>
-          <MainButton class="bg-red-600 border-none" v-if="((role != 'User') && (role == 'CFO' || role == 'Accounter'))"
-            @click="editStatusRequest('Reject')" text="رفض"></MainButton>
+          <MainButton class="bg-red-600 border-none" v-if="role == 'User'" @click="editStatusRequest('Reject')"
+            text="رفض"></MainButton>
 
         </div>
       </div>
@@ -646,9 +641,9 @@ const isInfoModalOpen = ref(false);
             </div>
           </div>
 
-          <MainButton class="h-12 mt-4 xl:mt-0" v-if="showAddOrder" @click="isAddModalOpen = true"
+          <!-- <MainButton class="h-12 mt-4 xl:mt-0" v-if="showAddOrder" @click="isAddModalOpen = true"
             text="اضافة طلب  جديد">
-          </MainButton>
+          </MainButton> -->
         </div>
         <!-- Table -->
 
