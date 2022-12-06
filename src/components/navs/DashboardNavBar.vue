@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { onClickOutside } from '@vueuse/core';
+import { useSignalR } from '@dreamonkey/vue-signalr';
 
 const props = defineProps({
   path: String,
@@ -14,7 +15,13 @@ const logout = () => {
   localStorage.clear();
   window.location.href = '/login';
 };
+const signalr = useSignalR();
 
+signalr.invoke('AddUserToOnlineList', localStorage.getItem("role"), localStorage.getItem("userId"));
+
+signalr.on('Notify', ({ message }) => {
+  console.log(message);
+});
 
 const fullName = localStorage.getItem('fullName');
 const email = localStorage.getItem('email');
@@ -23,37 +30,30 @@ const email = localStorage.getItem('email');
 const logoutMenu = ref(null);
 const logoutButton = ref(null);
 const isLogoutMenuOpen = ref(false);
+const isNotificationMenuOpen = ref(false);
+
 onClickOutside(
   (logoutMenu, logoutButton),
   () => (isLogoutMenuOpen.value = false)
 );
+
+
 </script>
 <template>
-  <nav
-    class="fixed xl:relative flex items-center justify-between px-8 bg-background shadow-md w-full z-50 py-4"
-    v-motion-slide-top>
+  <nav class="fixed xl:relative flex items-center px-8 bg-background shadow-md w-full z-50 py-4" v-motion-slide-top>
     <!-- Path -->
     <div class="flex xl:text-xl text-on_background_variant">
       <span class="hidden xl:flex"> صفحة التحكم / {{ path }} </span>
       <!-- Navigation Mobile -->
       <div class="dropdown inline-block relative">
-        <button
-          class="rounded inline-flex items-center gap-2 xl:hidden"
-          ref="button"
-          @click="isMenuOpen = !isMenuOpen">
+        <button class="rounded inline-flex items-center gap-2 xl:hidden" ref="button" @click="isMenuOpen = !isMenuOpen">
           <span class="text-primary text-xl">{{ path }}</span>
 
           <PhCaretLeft class="fill-primary w-6 h-6 -rotate-90" />
         </button>
-        <transition
-          enter-active-class="duration-300 ease-in-out"
-          enter-from-class="-translate-y-2 opacity-0"
-          leave-active-class="duration-300 ease-in-out"
-          leave-to-class="-translate-y-2 opacity-0">
-          <ul
-            class="mt-2 dropdown-menu absolute bg-background rounded-2xl shadow-lg"
-            v-if="isMenuOpen"
-            ref="menu">
+        <transition enter-active-class="duration-300 ease-in-out" enter-from-class="-translate-y-2 opacity-0"
+          leave-active-class="duration-300 ease-in-out" leave-to-class="-translate-y-2 opacity-0">
+          <ul class="mt-2 dropdown-menu absolute bg-background rounded-2xl shadow-lg" v-if="isMenuOpen" ref="menu">
             <RouterLink to="/dashboard/settings">
               <li class="py-2 px-4 block text-lg">اعدادات الموقع</li>
             </RouterLink>
@@ -82,30 +82,48 @@ onClickOutside(
         </transition>
       </div>
     </div>
+
+    <!-- Notifications -->
+    <div class="mr-auto flex items-start justify-center ">
+      <div class="border border-on_background p-2 rounded-2xl ml-4 cursor-pointer"
+        @click="(isNotificationMenuOpen = !isNotificationMenuOpen)">
+        <div
+          class="rounded-full  bg-red-500 absolute flex items-center justify-center text-on_primary text-xs p-[3px] -mt-4 -mr-3">
+          10
+        </div>
+        <PhBell class="w-7 h-7" />
+      </div>
+
+      <!-- Dropdown menu -->
+      <div class="z-10 w-80 absolute mt-12 bg-white rounded divide-y divide-gray-100 shadow-md"
+        v-if="isNotificationMenuOpen">
+        <ul class="py-1 text-sm text-on_background">
+          <a href="#" class="flex items-center justify-center gap-4 py-2 px-4 hover:bg-gray-100 border-b">
+            <PhFileText class="w-12 h-12" />
+            <div class="space-y-2">
+              <h1 class="font-bold text-base">كسي وجعني بالليل</h1>
+              <p class="text-xs">اوي اوي اوي اوي اوي اوي اوي اوي اوي اوي اوي اوي اوي اوي
+              </p>
+            </div>
+          </a>
+        </ul>
+      </div>
+    </div>
     <!-- Log Out -->
-    <div class="dropdown inline-block relative">
-      <div
-        class="flex items-center justify-center gap-2 cursor-pointer hover:brightness-150 duration-300"
-        ref="logoutButton"
-        @click="isLogoutMenuOpen = !isLogoutMenuOpen">
+    <div class="dropdown inline-block relative ">
+      <div class="flex items-center justify-center gap-2 cursor-pointer hover:brightness-150 duration-300"
+        ref="logoutButton" @click="isLogoutMenuOpen = !isLogoutMenuOpen">
         <PhCaretLeft class="h-6 w-6 -rotate-90 fill-primary" />
-        <h5 class="text-xl text-primary">{{email}}</h5>
+        <h5 class="text-xl text-primary">{{ email }}</h5>
         <PhUser class="h-10 w-10" />
       </div>
-      <transition
-        enter-active-class="duration-300 ease-in-out"
-        enter-from-class="-translate-y-2 opacity-0"
-        leave-active-class="duration-300 ease-in-out"
-        leave-to-class="-translate-y-2 opacity-0">
+      <transition enter-active-class="duration-300 ease-in-out" enter-from-class="-translate-y-2 opacity-0"
+        leave-active-class="duration-300 ease-in-out" leave-to-class="-translate-y-2 opacity-0">
         <ul
           class="flex items-center justify-center mt-2 absolute bg-background dark:bg-background_dark dark:border dark:border-primary_dark rounded-full shadow-lg"
-          v-if="isLogoutMenuOpen"
-          ref="logoutMenu">
-          <MainButton
-            class="hover:gap-2 text-lg w-full"
-            @click="logout"
-            text="تسجيل الخروج"
-            ><PhSignOut class="w-5 h-5" />
+          v-if="isLogoutMenuOpen" ref="logoutMenu">
+          <MainButton class="hover:gap-2 text-lg w-full" @click="logout" text="تسجيل الخروج">
+            <PhSignOut class="w-5 h-5" />
           </MainButton>
         </ul>
       </transition>

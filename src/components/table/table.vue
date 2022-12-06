@@ -478,8 +478,7 @@ const isInfoModalOpen = ref(false);
               </tr>
             </thead>
             <tbody>
-              <tr class="bg-white border-b odd:bg-gray-100 even:bg-background text-sm" v-for="(item, index) in list"
-                :key="item.id">
+              <tr class="bg-background border-b odd:bg-on_background_variant even:bg-background text-sm" :key="item.id">
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold text-primary">
                   {{ index + 1 + paginationIndex }}
                 </td>

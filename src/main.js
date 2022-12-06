@@ -29,10 +29,18 @@ const options = {
   cancelButtonColor: '#ff7674',
 };
 
+import { VueSignalR } from '@dreamonkey/vue-signalr';
+import { HubConnectionBuilder } from '@microsoft/signalr';
+
+const connection = new HubConnectionBuilder()
+  .withUrl('https://localhost:7219/Notify')
+  .build();
+
 const app = createApp(App);
 app.use(MotionPlugin);
 app.use(createPinia());
 app.use(router);
+app.use(VueSignalR, { connection });
 app.use(i18n);
 app.use(VueAxios, axiosInstance);
 app.use(VueSweetalert2, options);

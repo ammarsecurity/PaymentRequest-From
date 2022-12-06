@@ -70,9 +70,9 @@ a {
 }
 
 .sidebar-item {
-  @apply w-full rounded-full flex gap-3 hover:gap-4 py-3 px-6 duration-300 hover:bg-primary_container text-xl items-center;
+  @apply w-full rounded-full flex gap-3 hover:gap-4 py-3 px-6 duration-300 hover:bg-primary_container text-xl items-center text-on_background;
 }
 
 .sidebar-item-icon {
-  @apply w-7 h-7;
+  @apply w-7 h-7 fill-on_background;
 }

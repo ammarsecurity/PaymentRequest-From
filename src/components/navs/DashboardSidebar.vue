@@ -56,7 +56,7 @@ const logout = () => {
 }
 
 .router-link-active {
-  background-color: var(--primary) !important;
+  background-color: #5d7dd9 !important;
   color: white;
 }
 
