@@ -8,12 +8,13 @@ import dayjs from 'dayjs';
 import { computed } from '@vue/reactivity';
 import printJS from 'print-js'
 
+
 /* -------------------- Vee Validate -------------------- */
 
 const validationSchemaEdit = ref({
-  requestedAmount: yup.string().required('هذا الحقل مطلوب'),
-  amountCurrency: yup.string().required('هذا الحقل مطلوب'),
-  purposeOfPaymentAndDetails: yup.string().required('هذا الحقل مطلوب'),
+  requestedAmount: yup.string().required('This field is required'),
+  amountCurrency: yup.string().required('This field is required'),
+  purposeOfPaymentAndDetails: yup.string().required('This field is required'),
 });
 /* ------------------------ Axios ----------------------- */
 
@@ -28,7 +29,7 @@ const createRequestForm = ref({
   amountCurrency: '',
   purposeOfPaymentAndDetails: '',
   otherInfo: '',
-  paymentBudget: '',
+  paymentBudget: true,
   paymentBudgetIfFalseJustification: '',
   paymentMethod: '',
   invoiceNumber: '',
@@ -46,7 +47,15 @@ const searchform = ref({
 });
 const search = async (value) => {
   getRequest();
+  pageNumber = 1;
 };
+const dateTime = async (value) => {
+  return moment(value).format("YYYY-MM-DD");
+};
+
+
+
+
 
 var showAddOrder = false;
 var isUser = false;
@@ -74,43 +83,57 @@ const submit = async (value) => {
     .then(({ data }) => {
       isLoading.value = false;
       isAddModalOpen.value = false;
-      isAddSuccess.value = true;
-      setTimeout(() => {
-        isAddSuccess.value = false;
-      }, 4000);
-      createRequestForm.value = {
-        requestedAmount: '',
-        amountCurrency: '',
-        purposeOfPaymentAndDetails: '',
-        otherInfo: '',
-        paymentBudget: '',
-        paymentBudgetIfFalseJustification: '',
-        paymentMethod: '',
-        invoiceNumber: '',
-        invoiceDate: '',
-        dueDate: '',
-      };
+      Swal.fire({
+        title: 'Operation accomplished successfully',
+        icon: 'success',
+        showCancelButton: true,
+        showConfirmButton: false,
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Close',
+      }),
+        createRequestForm.value = {
+          requestedAmount: '',
+          amountCurrency: '',
+          purposeOfPaymentAndDetails: '',
+          otherInfo: '',
+          paymentBudget: '',
+          paymentBudgetIfFalseJustification: '',
+          paymentMethod: '',
+          invoiceNumber: '',
+          invoiceDate: '',
+          dueDate: '',
+        };
       getRequest();
     })
     .catch((error) => {
       console.log(error);
       isLoading.value = false;
       Swal.fire({
-        title: 'خطأ',
-        text: 'حدث خطا بالمعلومات',
+        title: 'Error',
+        text: 'An information error has occurred',
         icon: 'error',
         showCancelButton: true,
         cancelButtonColor: '#213263',
-        cancelButtonText: 'اغلاق',
+        cancelButtonText: 'Close',
       });
     });
 
   return;
 };
+const isNumber = async (value) => {
+  alert("gfddfg")
+  evt = (evt) ? evt : window.event;
+  var charCode = (evt.which) ? evt.which : evt.keyCode;
+  if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+    evt.preventDefault();;
+  } else {
+    return true;
+  }
+};
 
 
 
-const lastInfo = ref('لاتوجد');
+const lastInfo = ref('Nothing');
 const requestId = ref('');
 const requeststatus = ref('');
 const paymentBudgetReason = computed(() => {
@@ -126,22 +149,25 @@ const editStatusRequest = async (value) => {
     .then(({ data }) => {
       isLoading.value = false;
       isInfoModalOpen.value = false;
-      isEditSuccess.value = true;
-      setTimeout(() => {
-        isEditSuccess.value = false;
-      }, 4000);
-
-      getRequest();
+      Swal.fire({
+        title: 'Operation accomplished successfully',
+        icon: 'success',
+        showCancelButton: true,
+        showConfirmButton: false,
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Close',
+      }),
+        getRequest();
     })
     .catch((error) => {
       isLoading.value = false;
       Swal.fire({
-        title: 'خطأ',
-        text: 'حدث خطأ اثناء تعديل الطلب',
+        title: 'Error',
+        text: 'An error occurred while updating the request',
         icon: 'error',
         showCancelButton: true,
         cancelButtonColor: '#213263',
-        cancelButtonText: 'اغلاق',
+        cancelButtonText: 'Close',
       });
     });
   return;
@@ -149,7 +175,7 @@ const editStatusRequest = async (value) => {
 
 const print = async (id) => {
 
-  printJS({ printable: `${baseURL}Main/GetReport?id=${id}`, type: 'pdf', modalMessage: "جارا تجهيز الطباعة...", showModal: true })
+  printJS({ printable: `${baseURL}Main/GetReport?id=${id}`, type: 'pdf', modalMessage: "Preparing for printing ...", showModal: true })
 }
 
 const editSubmit = async (value) => {
@@ -161,22 +187,26 @@ const editSubmit = async (value) => {
     .then(({ data }) => {
       isLoading.value = false;
       isEditModalOpen.value = false;
-      isEditSuccess.value = true;
-      setTimeout(() => {
-        isEditSuccess.value = false;
-      }, 4000);
+      Swal.fire({
+        title: 'Operation accomplished successfully',
+        icon: 'success',
+        showCancelButton: true,
+        showConfirmButton: false,
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Close',
+      }),
 
-      getRequest();
+        getRequest();
     })
     .catch((error) => {
       isLoading.value = false;
       Swal.fire({
-        title: 'خطأ',
-        text: 'حدث خطأ اثناء تعديل الطلب',
+        title: 'Error',
+        text: 'An error occurred while updating the request',
         icon: 'error',
         showCancelButton: true,
         cancelButtonColor: '#213263',
-        cancelButtonText: 'اغلاق',
+        cancelButtonText: 'Close',
       });
     });
   return;
@@ -208,12 +238,12 @@ const getRequest = () => {
       console.log(error);
       isLoading.value = false;
       Swal.fire({
-        title: 'خطأ',
-        text: 'حدث خطا بالمعلومات',
+        title: 'Error',
+        text: 'An information error has occurred',
         icon: 'error',
         showCancelButton: true,
         cancelButtonColor: '#213263',
-        cancelButtonText: 'اغلاق',
+        cancelButtonText: 'Close',
       });
     });
 };
@@ -258,13 +288,7 @@ const editRequestInfo = (index) => {
   editRequest.value.paymentBudget = info.paymentBudget;
   editRequest.value.paymentBudgetIfFalseJustification = info.paymentBudgetIfFalseJustification;
   editRequest.value.invoiceDate = info.invoiceDate.toString().split('T')[0];
-  editRequest.value.BeneficaryName = info.beneficaryName
-
-
-
-
-
-
+  editRequest.value.BeneficaryName = info.beneficaryName;
   editRequest.value.id = info.id;
 };
 
@@ -279,10 +303,11 @@ const requestInfo = ref({
   requestLoction: '',
 });
 
-
-const showRequestInfo = (index, status, id) => {
+const RequestisFinished = ref('');
+const showRequestInfo = (index, status, id, isFinished) => {
   requestId.value = id;
   requeststatus.value = status;
+  RequestisFinished.value = isFinished;
   const info = list.value[index];
 
   (requestInfo.value.beneficaryName = info.beneficaryName),
@@ -306,38 +331,39 @@ const isInfoModalOpen = ref(false);
 </script>
 <template>
   <!-- Post -->
-  <StateModal v-if="isAddSuccess" type="success" @close="isAddSuccess = false" title="تم اضافة الحساب  بنجاح" />
+
   <!-- Edit -->
-  <StateModal v-if="isEditSuccess" @close="isEditSuccess = false" title="تم تعديل الحساب بنجاح" />
+
   <MainLoader v-if="isLoading" />
 
   <!-- Modals -->
   <!-- Add Modal -->
-  <MainModal styles="max-w-max" text="اضافة طلب جديد" v-if="isAddModalOpen" @close="isAddModalOpen = false">
-    <Form class="grid grid-cols-2 gap-4" dir="rtl" :validationSchema="validationSchema" @submit="submit">
+  <MainModal styles="max-w-max" text="Add a new request" v-if="isAddModalOpen" @close="isAddModalOpen = false">
+    <Form class="gap-4" :validationSchema="validationSchema" @submit="submit">
       <!-- Title -->
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">المبلغ</label>
-        <Field
-          class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="requestedAmount" v-model="createRequestForm.requestedAmount" type="number">
-        </Field>
+        <label class="text-xl text-primary">Amount</label>
+
+        <input @keypress="isNumber($event)" class="border  border-on_background_variant rounded-full px-4 py-2
+          focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]" name="requestedAmount"
+          v-model="createRequestForm.requestedAmount" type="text">
+
         <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">العملة</label>
+        <label class="text-xl text-primary">Currency</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="amountCurrency" v-model="createRequestForm.amountCurrency" type="select" as="select">
-          <option value="IQD">دينار</option>
-          <option value="USD">دولار</option>
-          <option value="ERUO">يورو</option>
+          <option value="IQD">IQD</option>
+          <option value="USD">USD</option>
+          <option value="ERUO">EURO</option>
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="amountCurrency" component="div"></ErrorMessage>
       </div>
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">طريقة الدفع</label>
+        <label class="text-xl text-primary">Payment method</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="paymentMethod" v-model="createRequestForm.paymentMethod" type="select" as="select">
@@ -350,19 +376,19 @@ const isInfoModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">ميزانية الدفع</label>
+        <label class="text-xl text-primary">Payment Budget</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="paymentBudget" v-model="createRequestForm.paymentBudget" type="select" as="select">
-          <option :value=true>نعم</option>
-          <option :value=false>لا</option>
+          <option :value=true>yas</option>
+          <option :value=false>No</option>
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="paymentBudget" component="div"></ErrorMessage>
       </div>
       <div class="flex flex-col gap-2" v-if="!paymentBudgetReason">
-        <label class="text-xl text-primary">السبب</label>
+        <label class="text-xl text-red-600">Reason</label>
         <Field
-          class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
+          class="border border-red-600 rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="paymentBudgetIfFalseJustification" v-model="createRequestForm.paymentBudgetIfFalseJustification"
           type="text">
         </Field>
@@ -371,7 +397,7 @@ const isInfoModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">رقم الفاتورة</label>
+        <label class="text-xl text-primary">Invoice Number</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="invoiceNumber" v-model="createRequestForm.invoiceNumber" type="text">
@@ -380,7 +406,7 @@ const isInfoModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">تاريخ الفاتورة</label>
+        <label class="text-xl text-primary">Invoice Date</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="invoiceDate" v-model="createRequestForm.invoiceDate" type="date">
@@ -389,7 +415,7 @@ const isInfoModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">تاريخ النهائي</label>
+        <label class="text-xl text-primary">Due Date</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="dueDate" v-model="createRequestForm.dueDate" type="date">
@@ -398,7 +424,7 @@ const isInfoModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">اسم المستفيد</label>
+        <label class="text-xl text-primary">Beneficary Name</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="BeneficaryName" v-model="createRequestForm.BeneficaryName" type="text">
@@ -407,7 +433,7 @@ const isInfoModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">الغرض من الدفع والتفاصيل</label>
+        <label class="text-xl text-primary">Purpose of payment and details</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="purposeOfPaymentAndDetails" v-model="createRequestForm.purposeOfPaymentAndDetails" type="text">
@@ -416,43 +442,43 @@ const isInfoModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">تفاصيل اخرى</label>
+        <label class="text-xl text-primary">Other details</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="otherInfo" v-model="createRequestForm.otherInfo" type="text">
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="otherInfo" component="div"></ErrorMessage>
       </div>
-      <MainButton class="col-span-2" text="اضافة" type="submit" />
+      <MainButton class="col-span-2" text="Add" type="submit" />
     </Form>
   </MainModal>
 
   <!-- Edit Modal -->
-  <MainModal text="تعديل الطلب" v-if="isEditModalOpen" @close="isEditModalOpen = false">
-    <Form class="grid grid-cols-2 gap-4" dir="rtl" :validationSchema="validationSchemaEdit" @submit="editSubmit">
+  <MainModal text="Update Order" v-if="isEditModalOpen" @close="isEditModalOpen = false">
+    <Form class="gap-4" :validationSchema="validationSchemaEdit" @submit="editSubmit">
       <!-- Photo -->
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">المبلغ</label>
-        <Field
-          class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="requestedAmount" v-model="editRequest.requestedAmount" type="number">
+        <label class="text-xl text-primary">Amount</label>
+        <Field class="border  border-on_background_variant rounded-full px-4 py-2
+          focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]" name="requestedAmount"
+          v-model="editRequest.requestedAmount" type="number">
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">العملة</label>
+        <label class="text-xl text-primary">Currency</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="amountCurrency" v-model="editRequest.amountCurrency" type="select" as="select">
-          <option value="IQD">دينار</option>
-          <option value="USD">دولار</option>
-          <option value="ERUO">يورو</option>
+          <option value="IQD">IQD</option>
+          <option value="USD">USD</option>
+          <option value="ERUO">EURO</option>
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="amountCurrency" component="div"></ErrorMessage>
       </div>
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">طريقة الدفع</label>
+        <label class="text-xl text-primary">Payment method</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="paymentMethod" v-model="editRequest.paymentMethod" type="select" as="select">
@@ -465,17 +491,17 @@ const isInfoModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">ميزانية الدفع</label>
+        <label class="text-xl text-primary">Payment Budget</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="paymentBudget" v-model="editRequest.paymentBudget" type="select" as="select">
-          <option :value=true>نعم</option>
-          <option :value=false>لا</option>
+          <option :value=true>yas</option>
+          <option :value=false>No</option>
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="paymentBudget" component="div"></ErrorMessage>
       </div>
       <div class="flex flex-col gap-2" v-if="editRequest.paymentBudget == false">
-        <label class="text-xl text-primary">السبب</label>
+        <label class="text-xl text-primary">Reason</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="paymentBudgetIfFalseJustification" v-model="editRequest.paymentBudgetIfFalseJustification" type="text">
@@ -485,7 +511,7 @@ const isInfoModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">رقم الفاتورة</label>
+        <label class="text-xl text-primary">Invoice Number</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="invoiceNumber" v-model="editRequest.invoiceNumber" type="text">
@@ -494,7 +520,7 @@ const isInfoModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">تاريخ الفاتورة</label>
+        <label class="text-xl text-primary">Invoice Date</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="invoiceDate" v-model="editRequest.invoiceDate" type="date">
@@ -503,7 +529,7 @@ const isInfoModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">تاريخ النهائي</label>
+        <label class="text-xl text-primary">Due Date</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="dueDate" v-model="editRequest.dueDate" type="date">
@@ -512,7 +538,7 @@ const isInfoModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">اسم المستفيد</label>
+        <label class="text-xl text-primary">Beneficary Name</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="BeneficaryName" v-model="editRequest.BeneficaryName" type="text">
@@ -521,7 +547,7 @@ const isInfoModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">الغرض من الدفع والتفاصيل</label>
+        <label class="text-xl text-primary">Purpose of payment and details</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="purposeOfPaymentAndDetails" v-model="editRequest.purposeOfPaymentAndDetails" type="text">
@@ -530,7 +556,7 @@ const isInfoModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">تفاصيل اخرى</label>
+        <label class="text-xl text-primary">Other details</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="otherInfo" v-model="editRequest.otherInfo" type="text">
@@ -538,76 +564,76 @@ const isInfoModalOpen = ref(false);
         <ErrorMessage class="text-red-600 text-lg" name="otherInfo" component="div"></ErrorMessage>
       </div>
 
-      <MainButton class="col-span-2" text="تعديل" type="submit" />
+      <MainButton class="col-span-2" text="Update" type="submit" />
     </Form>
   </MainModal>
 
-  <MainModal styles="w-[40vw] h-[70vh]" text="تفاصيل الطلب" v-if="isInfoModalOpen" @close="isInfoModalOpen = false">
-    <div class="grid grid-cols-2 flex-col gap-16" dir="rtl">
-      <div class="flex flex-col col-span-2 gap-4">
+  <MainModal styles="w-[40vw] h-[70vh]" text="Order details" v-if="isInfoModalOpen" @close="isInfoModalOpen = false">
+    <div class="grid grid-cols-2 flex-col gap-16">
+      <div class="flex flex-col col-span-2 gap-4" v-if="RequestisFinished != true">
         <div class="flex flex-col gap-2" v-if="(role != 'SupUser' && role != 'User')">
-          <label class="text-xl text-primary">الملاحظة</label>
+          <label class="text-xl text-primary">Note</label>
           <Field
             class="border border-on_background_variant bg-background rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300"
-            name="category" v-model="lastInfo" type="textarea" as="textarea">
+            name="lastInfo" v-model="lastInfo" type="textarea" as="textarea">
           </Field>
           <ErrorMessage class="text-red-600 text-lg" name="lastInfo" component="div"></ErrorMessage>
         </div>
         <div class="flex gap-4 w-full col-span-2">
 
           <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForCFO')"
-            class="bg-green-600 border-none" text="الموافقة"></MainButton>
+            class="bg-green-600 border-none" text="Approval"></MainButton>
 
           <MainButton v-if="role == 'CFO'" @click="editStatusRequest('ApprovalFromCFO')"
-            class="bg-green-600 border-none" text="الموافقة"></MainButton>
+            class="bg-green-600 border-none" text="Approval"></MainButton>
 
           <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForEdit')"
-            class="bg-orange-600 border-none" text="ارجاع لغرض التعديل"></MainButton>
+            class="bg-orange-600 border-none" text="Return for modification"></MainButton>
           <MainButton class="bg-red-600 border-none" v-if="((role != 'User') && (role == 'CFO' || role == 'Accounter'))"
-            @click="editStatusRequest('Reject')" text="رفض"></MainButton>
+            @click="editStatusRequest('Reject')" text="Reject"></MainButton>
 
         </div>
       </div>
 
       <div class="flex flex-col gap-2 text-red-600">
-        <label class="text-xl text-primary text-red-600">الملاحظة</label>
+        <label class="text-xl text-primary text-red-600">Note</label>
         <p class="text-xl text-primary text-red-600">
           {{ requestInfo.lastInfo }}
         </p>
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">الغرض من الدفع والتفاصيل</label>
+        <label class="text-xl text-primary">Purpose of payment and details</label>
         <p>{{ requestInfo.purposeOfPaymentAndDetails }}</p>
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">تفاصيل اخرى</label>
+        <label class="text-xl text-primary">Other details</label>
         <p>{{ requestInfo.otherInfo }}</p>
       </div>
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">طريقة الدفع </label>
+        <label class="text-xl text-primary">Payment method </label>
         <p>{{ requestInfo.paymentMethod }}</p>
       </div>
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">تاريخ الاستحقاق</label>
-        <p>{{ requestInfo.dueDate }}</p>
+        <label class="text-xl text-primary">Due date</label>
+        <p>{{ (requestInfo.dueDate).toString.split('T')[0] }}</p>
       </div>
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">تاريخ الفاتورة</label>
+        <label class="text-xl text-primary">Invoice Date</label>
         <p>{{ requestInfo.invoiceDate }}</p>
       </div>
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">اسم المستفيد</label>
+        <label class="text-xl text-primary">Beneficary Name</label>
         <p>{{ requestInfo.beneficaryName }}</p>
       </div>
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">دفع الميزانية</label>
+        <label class="text-xl text-primary">Payment Budget</label>
         <p v-if="requestInfo.paymentBudget == false">لا</p>
-        <p v-else>نعم</p>
+        <p v-else>yas</p>
       </div>
       <div class="flex flex-col gap-2" v-if="requestInfo.paymentBudget == false">
-        <label class="text-xl text-primary">السبب</label>
+        <label class="text-xl text-primary">Reason</label>
         <p>{{ requestInfo.paymentBudgetIfFalseJustification }}</p>
       </div>
     </div>
@@ -616,12 +642,12 @@ const isInfoModalOpen = ref(false);
   <div class="flex xl:overflow-hidden xl:h-screen relative z-20" v-motion-fade>
     <DashboardSidebar class="hidden xl:block" />
     <div class="flex flex-col w-full">
-      <DashboardNavBar path="الطلبات قيد الانتظار" />
+      <DashboardNavBar path="Pending Orders" />
       <div class="flex flex-col px-4 xl:px-8 mt-32 xl:mt-8 gap-4">
         <div class="flex flex-col xl:flex-row w-full xl:justify-between xl:items-center">
           <div class="grid grid-cols-2 xl:flex xl:flex-row gap-4 items-center">
             <div class="flex flex-col gap-2">
-              <label class="text-primary">الاسم الكامل</label>
+              <label class="text-primary">Full Name</label>
               <Field
                 class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
                 name="Password" v-model="searchform.fullName" type="text">
@@ -629,7 +655,7 @@ const isInfoModalOpen = ref(false);
               <ErrorMessage class="text-red-600 text-lg" name="Password" component="div"></ErrorMessage>
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-primary">اسم الشركة</label>
+              <label class="text-primary">Company Name</label>
               <Field
                 class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
                 name="Password" v-model="searchform.companyName" type="text">
@@ -637,7 +663,7 @@ const isInfoModalOpen = ref(false);
               <ErrorMessage class="text-red-600 text-lg" name="Password" component="div"></ErrorMessage>
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-primary">رقم الطلب</label>
+              <label class="text-primary">Order Number</label>
               <Field
                 class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
                 name="Password" v-model="searchform.requestNumber" type="text">
@@ -645,7 +671,7 @@ const isInfoModalOpen = ref(false);
               <ErrorMessage class="text-red-600 text-lg" name="Password" component="div"></ErrorMessage>
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-primary">التاريخ</label>
+              <label class="text-primary">Date</label>
               <Field
                 class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
                 name="Password" v-model="searchform.date" type="date">
@@ -653,27 +679,26 @@ const isInfoModalOpen = ref(false);
               <ErrorMessage class="text-red-600 text-lg" name="Password" component="div"></ErrorMessage>
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-primary">الحالة</label>
+              <label class="text-primary">Status</label>
               <Field
                 class="border border-on_background_variant bg-background rounded-full focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
-                name="category" v-model="searchform.status" type="select" as="select">
-                <option value="">الكل</option>
-                <option value="Wait">انتظار المحاسب</option>
-                <option value="WaitForCompanyManger">انتظار مدير الشركة</option>
-                <option value="Reject">مرفوضة</option>
-                <option value="WaitForEdit">انتظار التعديل</option>
-                <option value="WaitForCFO">انتظار موافقة CFO</option>
-                <option value="Finished">مكتملة</option>
+                name="status" v-model="searchform.status" type="select" as="select">
+                <option value="">All</option>
+                <option value="Wait">Waiting Accountant</option>
+                <option value="WaitForCompanyManger">Waiting Company Manager</option>
+                <option value="Reject">Rejected</option>
+                <option value="WaitForEdit">Waiting Update</option>
+                <option value="WaitForCFO">Awaiting CFO approval</option>
+                <option value="Finished">Completed</option>
               </Field>
-              <ErrorMessage class="text-red-600 text-lg" name="UserRole" component="div"></ErrorMessage>
+              <ErrorMessage class="text-red-600 text-lg" name="status" component="div"></ErrorMessage>
             </div>
             <div class="bg-primary rounded-full p-2 self-end max-w-max" @click="search()">
               <PhMagnifyingGlass class="h-6 w-6 fill-on_primary" />
             </div>
           </div>
 
-          <MainButton class="h-12 mt-4 xl:mt-0" v-if="showAddOrder" @click="isAddModalOpen = true"
-            text="اضافة طلب  جديد">
+          <MainButton class="h-12 mt-4 xl:mt-0" v-if="showAddOrder" @click="isAddModalOpen = true" text="Add new order">
           </MainButton>
         </div>
         <!-- Table -->
@@ -686,32 +711,32 @@ const isInfoModalOpen = ref(false);
                   #
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  صورة او الشعار
+                  Picture or logo
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  الاسم الكامل
+                  Full Name
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  اسم الشركة
+                  Company Name
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  المبلغ
+                  Amount
                 </th>
 
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  رقم الفاتورة
+                  Invoice Number
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  رقم الطلب
+                  Order Number
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  الحالة
+                  Status
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  تاريخ الاضافة
+                  Added date
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4 rounded-tl-xl">
-                  الاجرائات
+                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4 rounded-tr-xl">
+                  Options
                 </th>
               </tr>
             </thead>
@@ -720,8 +745,8 @@ const isInfoModalOpen = ref(false);
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold text-primary">
                   {{ index + 1 + paginationIndex }}
                 </td>
-                <th scope="row" class="whitespace-nowrap">
-                  <img class="h-16 w-20 object-cover rounded-lg my-1" :src="item.companyLogo" alt="" />
+                <th scope="row" class="whitespace-nowrap ">
+                  <img class="h-16 w-16 object-cover rounded-[50px] my-1" :src="item.companyLogo" alt="" />
                 </th>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold">
                   {{ item.fullName }}
@@ -743,25 +768,25 @@ const isInfoModalOpen = ref(false);
                   {{ item.requestNumber }}
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'Wait'">
-                  انتظار الحسابات
+                  Waiting Accounts
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForCompanyManger'">
-                  انتظار مدير الشركة
+                  Waiting Company Manager
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'Reject'">
-                  مرفوضة
+                  Rejected
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForEdit'">
-                  انتظار التعديل
+                  Waiting Update
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'ApprovalFromCFO'">
-                  تمت الموافقة من قبل CFO
+                  CFO Approved
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'Finished'">
-                  مكتملة
+                  Completed
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForCFO'">
-                  انتظار موافقة CFO
+                  Awaiting CFO approval
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4">
                   {{ dayjs(item.requestDate).format('ddd, DD MMM YYYY') }}
@@ -775,7 +800,7 @@ const isInfoModalOpen = ref(false);
 
                     <PhEye class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer"
                       @click="
-                        showRequestInfo(index, item.status, item.id),
+                        showRequestInfo(index, item.status, item.id, item.isFinished),
                         (isInfoModalOpen = true)
                       " />
                     <PhPrinterDuotone @click="print(item.id)"
@@ -791,27 +816,27 @@ const isInfoModalOpen = ref(false);
 
         <!--Pag-->
         <nav aria-label="Table navigation" class="flex justify-between items-center py-4">
-          <div class="flex gap-2 items-center bg-primary_container py-2 px-4 rounded-xl">
+          <div class="flex gap-2 items-center bg-primary_container rounded-xl py-2 px-4 ">
             <span class="font-bold text-sm text-background">{{
                 paginationIndex + 10 >= totalRecords
                   ? totalRecords
                   : paginationIndex + 10
             }}</span>
-            <span class="text-on_background">من</span>
+            <span class="text-on_background">From</span>
             <span class="font-bold text-sm text-background">{{
                 totalRecords
             }}</span>
           </div>
           <ul class="flex items-center">
             <button :disabled="paginationIndex <= 1"
-              class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2 rounded-r-xl xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
+              class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2   rounded-l-xl xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
               @click="previousPage">
-              السابق
+              Previous
             </button>
             <button :disabled="paginationIndex + 10 >= totalRecords"
-              class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2 rounded-l-xl xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
+              class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2 rounded-r-xl  xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
               @click="nextPage">
-              التالي
+              Next
             </button>
           </ul>
         </nav>
