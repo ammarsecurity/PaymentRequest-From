@@ -94,6 +94,15 @@ const submit = async (value) => {
     })
     .catch((error) => {
       console.log(error);
+      isLoading.value = false;
+      Swal.fire({
+        title: 'خطأ',
+        text: 'حدث خطا بالمعلومات',
+        icon: 'error',
+        showCancelButton: true,
+        cancelButtonColor: '#213263',
+        cancelButtonText: 'اغلاق',
+      });
     });
 
   return;
@@ -196,6 +205,16 @@ const getRequest = () => {
     })
     .catch((error) => {
       isLoading.value = false;
+      console.log(error);
+      isLoading.value = false;
+      Swal.fire({
+        title: 'خطأ',
+        text: 'حدث خطا بالمعلومات',
+        icon: 'error',
+        showCancelButton: true,
+        cancelButtonColor: '#213263',
+        cancelButtonText: 'اغلاق',
+      });
     });
 };
 getRequest();
@@ -301,7 +320,7 @@ const isInfoModalOpen = ref(false);
         <label class="text-xl text-primary">المبلغ</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="requestedAmount" v-model="createRequestForm.requestedAmount" type="text">
+          name="requestedAmount" v-model="createRequestForm.requestedAmount" type="number">
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
       </div>
@@ -416,7 +435,7 @@ const isInfoModalOpen = ref(false);
         <label class="text-xl text-primary">المبلغ</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="requestedAmount" v-model="editRequest.requestedAmount" type="text">
+          name="requestedAmount" v-model="editRequest.requestedAmount" type="number">
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
       </div>
@@ -636,8 +655,9 @@ const isInfoModalOpen = ref(false);
             <div class="flex flex-col gap-2">
               <label class="text-primary">الحالة</label>
               <Field
-                class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
+                class="border border-on_background_variant bg-background rounded-full focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
                 name="category" v-model="searchform.status" type="select" as="select">
+                <option value="">الكل</option>
                 <option value="Wait">انتظار المحاسب</option>
                 <option value="WaitForCompanyManger">انتظار مدير الشركة</option>
                 <option value="Reject">مرفوضة</option>
@@ -696,7 +716,7 @@ const isInfoModalOpen = ref(false);
               </tr>
             </thead>
             <tbody>
-              <tr class="bg-white border-b odd:bg-gray-400 even:bg-background text-sm" v-for="(item, index) in list">
+              <tr class="bg-white border-b odd:bg-gray-200 even:bg-background text-sm" v-for="(item, index) in list">
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold text-primary">
                   {{ index + 1 + paginationIndex }}
                 </td>
@@ -710,9 +730,9 @@ const isInfoModalOpen = ref(false);
                   {{ item.companyName }}
                 </td>
 
-                <td class="xl:py-3 xl:px-6 py-2 px-4">
+                <td class="xl:py-3 xl:px-6 py-2 px-4  flex justify-center align-middle h-[70px] items-center">
                   <h1
-                    class="text-center xl:text-start bg-primary_container text-on_background max-w-max rounded-2xl px-2 py-2">
+                    class="text-center xl:text-start bg-primary_container text-background max-w-max rounded-2xl px-2 py-2">
                     {{ item.requestedAmount }} - {{ item.amountCurrency }}
                   </h1>
                 </td>
@@ -772,13 +792,13 @@ const isInfoModalOpen = ref(false);
         <!--Pag-->
         <nav aria-label="Table navigation" class="flex justify-between items-center py-4">
           <div class="flex gap-2 items-center bg-primary_container py-2 px-4 rounded-xl">
-            <span class="font-bold text-sm text-primary">{{
+            <span class="font-bold text-sm text-background">{{
                 paginationIndex + 10 >= totalRecords
                   ? totalRecords
                   : paginationIndex + 10
             }}</span>
             <span class="text-on_background">من</span>
-            <span class="font-bold text-sm text-primary">{{
+            <span class="font-bold text-sm text-background">{{
                 totalRecords
             }}</span>
           </div>

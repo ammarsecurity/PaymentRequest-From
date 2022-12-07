@@ -79,7 +79,5 @@ const login = () => {
         <MainButton class="mt-2" text="تسجيل الدخول" type="submit" />
       </Form>
     </div>
-
-    <MainFooter />
   </div>
 </template>

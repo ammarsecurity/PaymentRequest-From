@@ -3,7 +3,6 @@ import { axiosInstance } from '@/api/axiosInstance';
 import i18n from '@/locales/i18n';
 
 /* ----------------------- Routes ----------------------- */
-import HomeView from '@/views/HomeView.vue';
 import TestView from '@/views/TestView.vue';
 import LoginView from '@/views/LoginView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
@@ -13,6 +12,8 @@ import NotFoundView from '@/views/NotFoundView.vue';
 import DashboardUsersView from '@/views/dashboard/DashboardUsersView.vue';
 import DashboardRequestView from '@/views/dashboard/DashboardRequestView.vue';
 import DashboardSubUserRequestView from '@/views/dashboard/DashboardSubUserRequestView.vue';
+import DashboardHome from '@/views/dashboard/DashboardHome.vue';
+import DashboardRequestReportsView from '@/views/dashboard/DashboardRequestReportsView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,15 +21,10 @@ const router = createRouter({
     {
       path: '/',
       redirect: {
-        name: 'home',
+        name: 'login',
       },
     },
 
-    {
-      path: '/home',
-      name: 'home',
-      component: HomeView,
-    },
     {
       path: '/login',
       name: 'login',
@@ -48,11 +44,23 @@ const router = createRouter({
       name: 'dashboard-users',
       component: DashboardUsersView,
     },
+
+    {
+      path: '/dashboard/home',
+      name: 'dashboard-home',
+      component: DashboardHome,
+    },
+    {
+      path: '/dashboard/requestreports',
+      name: 'dashboard-requestreports',
+      component: DashboardRequestReportsView,
+    },
     {
       path: '/dashboard/supusersrequest',
       name: 'dashboard-supusersrequest',
       component: DashboardSubUserRequestView,
     },
+
     {
       path: '/dashboard/request',
       name: 'dashboard-request',

@@ -1,11 +1,12 @@
 <script setup>
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
-import { axiosInstance } from '@/api/axiosInstance.js';
+import { axiosInstance, baseURL } from '@/api/axiosInstance.js';
 import { ref } from 'vue';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
 import { computed } from '@vue/reactivity';
+import printJS from 'print-js'
 
 /* -------------------- Vee Validate -------------------- */
 
@@ -92,7 +93,7 @@ const submit = async (value) => {
       getRequest();
     })
     .catch((error) => {
-
+      console.log(error);
       isLoading.value = false;
       Swal.fire({
         title: 'خطأ',
@@ -146,6 +147,11 @@ const editStatusRequest = async (value) => {
   return;
 };
 
+const print = async (id) => {
+
+  printJS({ printable: `${baseURL}Main/GetReport?id=${id}`, type: 'pdf', modalMessage: "جارا تجهيز الطباعة...", showModal: true })
+}
+
 const editSubmit = async (value) => {
   isLoading.value = true;
   isError.value = false;
@@ -188,7 +194,7 @@ const getRequest = () => {
   isLoading.value = true;
   axiosInstance
     .get(
-      `Main/GetSupUserRequest?userRequest=${isUser}&PageNumber=${pageNumber.value}&PageSize=${pageSize.value}&date=${searchform.value.date}&companyName=${searchform.value.companyName}&requestNumber=${searchform.value.requestNumber}&status=${searchform.value.status}&fullName=${searchform.value.fullName}`
+      `Main/GetRequset?userRequest=${isUser}&PageNumber=${pageNumber.value}&PageSize=${pageSize.value}&date=${searchform.value.date}&companyName=${searchform.value.companyName}&requestNumber=${searchform.value.requestNumber}&status=${searchform.value.status}&fullName=${searchform.value.fullName}&isAll=true`
     )
     .then(({ data }) => {
       list.value = data.data;
@@ -198,6 +204,8 @@ const getRequest = () => {
       isLoading.value = false;
     })
     .catch((error) => {
+      isLoading.value = false;
+      console.log(error);
       isLoading.value = false;
       Swal.fire({
         title: 'خطأ',
@@ -251,6 +259,12 @@ const editRequestInfo = (index) => {
   editRequest.value.paymentBudgetIfFalseJustification = info.paymentBudgetIfFalseJustification;
   editRequest.value.invoiceDate = info.invoiceDate.toString().split('T')[0];
   editRequest.value.BeneficaryName = info.beneficaryName
+
+
+
+
+
+
   editRequest.value.id = info.id;
 };
 
@@ -306,7 +320,7 @@ const isInfoModalOpen = ref(false);
         <label class="text-xl text-primary">المبلغ</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="requestedAmount" v-model="createRequestForm.requestedAmount" type="text">
+          name="requestedAmount" v-model="createRequestForm.requestedAmount" type="number">
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
       </div>
@@ -421,7 +435,7 @@ const isInfoModalOpen = ref(false);
         <label class="text-xl text-primary">المبلغ</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="requestedAmount" v-model="editRequest.requestedAmount" type="text">
+          name="requestedAmount" v-model="editRequest.requestedAmount" type="number">
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
       </div>
@@ -530,8 +544,8 @@ const isInfoModalOpen = ref(false);
 
   <MainModal styles="w-[40vw] h-[70vh]" text="تفاصيل الطلب" v-if="isInfoModalOpen" @close="isInfoModalOpen = false">
     <div class="grid grid-cols-2 flex-col gap-16" dir="rtl">
-      <div class="flex flex-col col-span-2 gap-4" v-if="requeststatus == 'WaitForCompanyManger'">
-        <div class="flex flex-col gap-2">
+      <div class="flex flex-col col-span-2 gap-4">
+        <div class="flex flex-col gap-2" v-if="(role != 'SupUser' && role != 'User')">
           <label class="text-xl text-primary">الملاحظة</label>
           <Field
             class="border border-on_background_variant bg-background rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300"
@@ -541,11 +555,16 @@ const isInfoModalOpen = ref(false);
         </div>
         <div class="flex gap-4 w-full col-span-2">
 
-          <MainButton v-if="role == 'User'" @click="editStatusRequest('Wait')" class="bg-green-600 border-none"
-            text="الموافقة"></MainButton>
+          <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForCFO')"
+            class="bg-green-600 border-none" text="الموافقة"></MainButton>
 
-          <MainButton class="bg-red-600 border-none" v-if="role == 'User'" @click="editStatusRequest('Reject')"
-            text="رفض"></MainButton>
+          <MainButton v-if="role == 'CFO'" @click="editStatusRequest('ApprovalFromCFO')"
+            class="bg-green-600 border-none" text="الموافقة"></MainButton>
+
+          <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForEdit')"
+            class="bg-orange-600 border-none" text="ارجاع لغرض التعديل"></MainButton>
+          <MainButton class="bg-red-600 border-none" v-if="((role != 'User') && (role == 'CFO' || role == 'Accounter'))"
+            @click="editStatusRequest('Reject')" text="رفض"></MainButton>
 
         </div>
       </div>
@@ -653,9 +672,9 @@ const isInfoModalOpen = ref(false);
             </div>
           </div>
 
-          <!-- <MainButton class="h-12 mt-4 xl:mt-0" v-if="showAddOrder" @click="isAddModalOpen = true"
+          <MainButton class="h-12 mt-4 xl:mt-0" v-if="showAddOrder" @click="isAddModalOpen = true"
             text="اضافة طلب  جديد">
-          </MainButton> -->
+          </MainButton>
         </div>
         <!-- Table -->
 
@@ -697,8 +716,7 @@ const isInfoModalOpen = ref(false);
               </tr>
             </thead>
             <tbody>
-              <tr class="bg-white border-b odd:bg-gray-200 even:bg-background text-sm" v-for="(item, index) in list"
-                :key="item.id">
+              <tr class="bg-white border-b odd:bg-gray-200 even:bg-background text-sm" v-for="(item, index) in list">
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold text-primary">
                   {{ index + 1 + paginationIndex }}
                 </td>
@@ -754,11 +772,15 @@ const isInfoModalOpen = ref(false);
                       class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer" @click="
                         editRequestInfo(index), (isEditModalOpen = true)
                       " />
+
                     <PhEye class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer"
                       @click="
                         showRequestInfo(index, item.status, item.id),
                         (isInfoModalOpen = true)
                       " />
+                    <PhPrinterDuotone @click="print(item.id)"
+                      v-if="(item.isFinished == true && item.requestLoction == 1 && role == 'Accounter')"
+                      class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer" />
                   </div>
 
                 </td>

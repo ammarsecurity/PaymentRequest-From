@@ -68,7 +68,9 @@ a {
   color: var(--white);
   background: var(--primary);
 }
-
+tr {
+  text-align: center;
+}
 .sidebar-item {
   @apply w-full rounded-full flex gap-3 hover:gap-4 py-3 px-6 duration-300 hover:bg-primary_container text-xl items-center text-on_background;
 }

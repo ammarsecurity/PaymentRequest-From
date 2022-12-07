@@ -37,13 +37,8 @@ const changeLang = (lang) => {
 <template>
   <nav
     class="fixed bg-background dark:bg-background_dark xl:bg-transparent xl:dark:bg-transparent xl:relative z-[100] w-full flex items-center py-4 px-8 xl:px-24 xl:py-6 justify-between">
-    <a
-      class="flex relative gap-4 items-center"
-      href="/">
-      <img
-        class="w-16 xl:w-20"
-        src="/images/logos/interior.png"
-        alt="" />
+    <a class="flex relative gap-4 items-center" href="/">
+      <img class="w-16 xl:w-20" src="/images/logos/interior.png" alt="" />
     </a>
     <div class="gap-4 hidden xl:flex xl:gap-6">
       <RouterLink
@@ -82,64 +77,32 @@ const changeLang = (lang) => {
       <a href="/contact">
         <MainButton :text="$t('contact')" />
       </a>
-      <transition
-        enter-active-class="duration-700 ease-in-out"
-        enter-from-class="-translate-y-96 rotate-180 opacity-0"
-        leave-active-class="duration-700 ease-in-out"
-        leave-to-class="-translate-y-96 rotate-180 opacity-0">
-        <PhMoonStars
-          v-if="!isDark"
-          @click="toggleDark()"
-          :class="lang === 'en' ? '-translate-x-16' : 'translate-x-16'"
+      <transition enter-active-class="duration-700 ease-in-out" enter-from-class="-translate-y-96 rotate-180 opacity-0"
+        leave-active-class="duration-700 ease-in-out" leave-to-class="-translate-y-96 rotate-180 opacity-0">
+        <PhMoonStars v-if="!isDark" @click="toggleDark()" :class="lang === 'en' ? '-translate-x-16' : 'translate-x-16'"
           class="fill-on_primary absolute dark:fill-on_primary_dark w-12 h-12 bg-primary dark:bg-primary_dark rounded-full p-3 cursor-pointer transition-all duration-300 hover:brightness-125" />
       </transition>
-      <transition
-        enter-active-class="duration-700 ease-in-out"
-        enter-from-class="-translate-y-96 rotate-180 opacity-0"
-        leave-active-class="duration-700 ease-in-out"
-        leave-to-class="-translate-y-96 rotate-180 opacity-0">
-        <PhSun
-          v-if="isDark"
-          @click="toggleDark()"
-          :class="lang === 'en' ? '-translate-x-16' : 'translate-x-16'"
+      <transition enter-active-class="duration-700 ease-in-out" enter-from-class="-translate-y-96 rotate-180 opacity-0"
+        leave-active-class="duration-700 ease-in-out" leave-to-class="-translate-y-96 rotate-180 opacity-0">
+        <PhSun v-if="isDark" @click="toggleDark()" :class="lang === 'en' ? '-translate-x-16' : 'translate-x-16'"
           class="fill-on_primary absolute dark:fill-on_primary_dark w-12 h-12 bg-primary dark:bg-primary_dark rounded-full p-3 cursor-pointer transition-all duration-300 hover:brightness-125" />
       </transition>
 
       <!-- Language Switcher -->
       <div class="inline-block relative">
-        <button
-          class="rounded inline-flex items-center gap-2"
-          ref="languageButton"
+        <button class="rounded inline-flex items-center gap-2" ref="languageButton"
           @click="isLanguageMenuOpen = !isLanguageMenuOpen">
-          <PhGlobe
-            class="fill-primary dark:fill-primary_dark w-6 h-6 xl:h-7 xl:w-7" />
-          <span
-            class="text-primary dark:text-primary_dark text-xl"
-            v-if="lang == 'ar'"
-            >العربية</span
-          >
-          <span
-            class="text-primary dark:text-primary_dark text-xl"
-            v-if="lang == 'en'"
-            >English</span
-          >
-          <span
-            class="text-primary dark:text-primary_dark text-xl"
-            v-if="lang == 'ku'"
-            >كوردى</span
-          >
-          <PhCaretLeft
-            class="fill-primary dark:fill-primary_dark w-6 h-6 -rotate-90" />
+          <PhGlobe class="fill-primary dark:fill-primary_dark w-6 h-6 xl:h-7 xl:w-7" />
+          <span class="text-primary dark:text-primary_dark text-xl" v-if="lang == 'ar'">العربية</span>
+          <span class="text-primary dark:text-primary_dark text-xl" v-if="lang == 'en'">English</span>
+          <span class="text-primary dark:text-primary_dark text-xl" v-if="lang == 'ku'">كوردى</span>
+          <PhCaretLeft class="fill-primary dark:fill-primary_dark w-6 h-6 -rotate-90" />
         </button>
-        <transition
-          enter-active-class="duration-300 ease-in-out"
-          enter-from-class="-translate-y-2 opacity-0"
-          leave-active-class="duration-300 ease-in-out"
-          leave-to-class="-translate-y-2 opacity-0">
+        <transition enter-active-class="duration-300 ease-in-out" enter-from-class="-translate-y-2 opacity-0"
+          leave-active-class="duration-300 ease-in-out" leave-to-class="-translate-y-2 opacity-0">
           <ul
             class="mt-2 dropdown-menu absolute bg-background dark:bg-background_dark dark:border dark:border-primary_dark rounded-2xl shadow-lg w-full"
-            v-if="isLanguageMenuOpen"
-            ref="languageMenu">
+            v-if="isLanguageMenuOpen" ref="languageMenu">
             <li
               class="py-2 px-4 block text-lg hover:bg-primary hover:text-on_primary dark:hover:bg-primary_dark transition-all duration-300 rounded-t-xl whitespace-no-wrap text-on_background dark:text-on_background_dark cursor-pointer"
               @click="changeLang('ar')">
@@ -161,72 +124,47 @@ const changeLang = (lang) => {
     </div>
     <!------------------------- Mobile ------------------------->
     <!-- Mobile Menu Button -->
-    <PhList
-      class="w-8 h-8 xl:hidden fill-on_background dark:fill-on_background_dark"
-      ref="button"
+    <PhList class="w-8 h-8 xl:hidden fill-on_background dark:fill-on_background_dark" ref="button"
       @click="isMenuOpen = !isMenuOpen" />
   </nav>
 
   <!-- Mobile Menu Dropdown -->
-  <transition
-    enter-active-class="duration-300 ease-in-out"
-    enter-from-class="opacity-0"
-    leave-active-class="duration-300 ease-in-out"
-    leave-to-class="opacity-0">
-    <div
-      class="fixed z-30 bg-on_background bg-opacity-50 w-screen h-screen"
-      v-if="isMenuOpen"></div>
+  <transition enter-active-class="duration-300 ease-in-out" enter-from-class="opacity-0"
+    leave-active-class="duration-300 ease-in-out" leave-to-class="opacity-0">
+    <div class="fixed z-30 bg-on_background bg-opacity-50 w-screen h-screen" v-if="isMenuOpen"></div>
   </transition>
-  <transition
-    enter-active-class="duration-300 ease-in-out"
-    enter-from-class="-translate-y-[30rem]"
-    leave-active-class="duration-300 ease-in-out"
-    leave-to-class="-translate-y-[30rem]">
+  <transition enter-active-class="duration-300 ease-in-out" enter-from-class="-translate-y-[30rem]"
+    leave-active-class="duration-300 ease-in-out" leave-to-class="-translate-y-[30rem]">
     <nav
       class="flex flex-col fixed xl:hidden shadow-lg z-40 w-full items-start justify-center mt-20 gap-8 py-8 px-8 bg-background dark:bg-background_dark text-2xl"
-      ref="menu"
-      id="menu"
-      v-if="isMenuOpen">
-      <RouterLink
-        class="text-xl text-on_background dark:text-on_background_dark flex gap-2 items-center"
-        to="/home">
+      ref="menu" id="menu" v-if="isMenuOpen">
+      <RouterLink class="text-xl text-on_background dark:text-on_background_dark flex gap-2 items-center" to="/home">
         <PhHouse class="fill-on_background dark:fill-primary_dark w-6 h-6" />
 
         {{ $t('home') }}
       </RouterLink>
-      <RouterLink
-        class="text-xl text-on_background dark:text-on_background_dark flex gap-2 items-center"
-        to="/blogs">
+      <RouterLink class="text-xl text-on_background dark:text-on_background_dark flex gap-2 items-center" to="/blogs">
         <PhFileText class="fill-on_background dark:fill-primary_dark w-6 h-6" />
 
         {{ $t('blogs') }}
       </RouterLink>
-      <RouterLink
-        class="text-xl text-on_background dark:text-on_background_dark flex gap-2 items-center"
-        to="/news">
-        <PhNewspaper
-          class="fill-on_background dark:fill-primary_dark w-6 h-6" />
+      <RouterLink class="text-xl text-on_background dark:text-on_background_dark flex gap-2 items-center" to="/news">
+        <PhNewspaper class="fill-on_background dark:fill-primary_dark w-6 h-6" />
 
         {{ $t('news') }}
       </RouterLink>
-      <RouterLink
-        class="text-xl text-on_background dark:text-on_background_dark flex gap-2 items-center"
-        to="/centers">
-        <PhBuildings
-          class="fill-on_background dark:fill-primary_dark w-6 h-6" />
+      <RouterLink class="text-xl text-on_background dark:text-on_background_dark flex gap-2 items-center" to="/centers">
+        <PhBuildings class="fill-on_background dark:fill-primary_dark w-6 h-6" />
 
         {{ $t('applying_centers') }}
       </RouterLink>
-      <RouterLink
-        class="text-xl text-on_background dark:text-on_background_dark flex gap-2 items-center"
+      <RouterLink class="text-xl text-on_background dark:text-on_background_dark flex gap-2 items-center"
         to="/instructions">
-        <PhListChecks
-          class="fill-on_background dark:fill-primary_dark w-6 h-6" />
+        <PhListChecks class="fill-on_background dark:fill-primary_dark w-6 h-6" />
 
         {{ $t('instructions') }}
       </RouterLink>
-      <RouterLink
-        class="text-xl text-on_background dark:text-on_background_dark flex gap-2 items-center"
+      <RouterLink class="text-xl text-on_background dark:text-on_background_dark flex gap-2 items-center"
         to="/features">
         <PhStarFour class="fill-on_background dark:fill-primary_dark w-6 h-6" />
 
@@ -234,17 +172,13 @@ const changeLang = (lang) => {
       </RouterLink>
 
       <div>
-        <div
-          class="flex text-xl gap-2 items-center justify-center text-primary dark:text-primary_dark"
-          v-if="!isDark"
+        <div class="flex text-xl gap-2 items-center justify-center text-primary dark:text-primary_dark" v-if="!isDark"
           @click="toggleDark()">
           <PhMoonStars
             class="fill-primary dark:fill-primary_dark w-6 h-6 cursor-pointer transition-all duration-300 hover:brightness-125" />
           {{ $t('dark_mode') }}
         </div>
-        <div
-          class="flex text-xl gap-2 items-center justify-center text-primary dark:text-primary_dark"
-          v-if="isDark"
+        <div class="flex text-xl gap-2 items-center justify-center text-primary dark:text-primary_dark" v-if="isDark"
           @click="toggleDark()">
           <PhSun
             class="fill-primary dark:fill-primary_dark w-6 h-6 cursor-pointer transition-all duration-300 hover:brightness-125" />
@@ -253,39 +187,19 @@ const changeLang = (lang) => {
       </div>
       <!-- Language Switcher -->
       <div class="dropdown inline-block relative">
-        <button
-          class="rounded inline-flex items-center gap-2"
-          ref="languageButton"
+        <button class="rounded inline-flex items-center gap-2" ref="languageButton"
           @click="isLanguageMenuOpen = !isLanguageMenuOpen">
-          <PhGlobe
-            class="fill-primary dark:fill-primary_dark w-6 h-6 xl:h-7 xl:w-7" />
-          <span
-            class="text-primary dark:text-primary_dark text-xl"
-            v-if="lang == 'ar'"
-            >العربية</span
-          >
-          <span
-            class="text-primary dark:text-primary_dark text-xl"
-            v-if="lang == 'en'"
-            >English</span
-          >
-          <span
-            class="text-primary dark:text-primary_dark text-xl"
-            v-if="lang == 'ku'"
-            >كوردى</span
-          >
-          <PhCaretLeft
-            class="fill-primary dark:fill-primary_dark w-6 h-6 -rotate-90" />
+          <PhGlobe class="fill-primary dark:fill-primary_dark w-6 h-6 xl:h-7 xl:w-7" />
+          <span class="text-primary dark:text-primary_dark text-xl" v-if="lang == 'ar'">العربية</span>
+          <span class="text-primary dark:text-primary_dark text-xl" v-if="lang == 'en'">English</span>
+          <span class="text-primary dark:text-primary_dark text-xl" v-if="lang == 'ku'">كوردى</span>
+          <PhCaretLeft class="fill-primary dark:fill-primary_dark w-6 h-6 -rotate-90" />
         </button>
-        <transition
-          enter-active-class="duration-300 ease-in-out"
-          enter-from-class="-translate-y-2 opacity-0"
-          leave-active-class="duration-300 ease-in-out"
-          leave-to-class="-translate-y-2 opacity-0">
+        <transition enter-active-class="duration-300 ease-in-out" enter-from-class="-translate-y-2 opacity-0"
+          leave-active-class="duration-300 ease-in-out" leave-to-class="-translate-y-2 opacity-0">
           <ul
             class="mt-2 dropdown-menu absolute bg-background dark:bg-background_dark dark:border dark:border-primary_dark rounded-2xl shadow-lg w-full"
-            v-if="isLanguageMenuOpen"
-            ref="languageMenu">
+            v-if="isLanguageMenuOpen" ref="languageMenu">
             <li
               class="py-2 px-4 block text-lg hover:bg-primary hover:text-on_primary dark:hover:bg-primary_dark transition-all duration-300 rounded-t-xl whitespace-no-wrap text-on_background dark:text-on_background_dark cursor-pointer"
               @click="changeLang('ar'), (isMenuOpen = false)">
@@ -310,7 +224,7 @@ const changeLang = (lang) => {
 
 <style scoped>
 .router-link-active {
-  color: var(--primary);
+  color: #0094da;
   font-weight: bold;
 }
 </style>

@@ -492,9 +492,9 @@ const isInfoModalOpen = ref(false);
                   {{ item.companyName }}
                 </td>
 
-                <td class="xl:py-3 xl:px-6 py-2 px-4">
+                <td class="xl:py-3 xl:px-6 py-2 px-4  flex justify-center align-middle h-[70px] items-center">
                   <h1
-                    class="text-center xl:text-start bg-primary_container text-on_background max-w-max rounded-2xl px-2 py-2">
+                    class="text-center xl:text-start bg-primary_container text-background max-w-max rounded-2xl px-2 py-2">
                     {{ item.requestedAmount }} - {{ item.amountCurrency }}
                   </h1>
                 </td>
@@ -544,13 +544,13 @@ const isInfoModalOpen = ref(false);
         <!--Pag-->
         <nav aria-label="Table navigation" class="flex justify-between items-center py-4">
           <div class="flex gap-2 items-center bg-primary_container py-2 px-4 rounded-xl">
-            <span class="font-bold text-sm text-primary">{{
+            <span class="font-bold text-sm text-background">{{
                 paginationIndex + 10 >= totalRecords
                   ? totalRecords
                   : paginationIndex + 10
             }}</span>
             <span class="text-on_background">من</span>
-            <span class="font-bold text-sm text-primary">{{
+            <span class="font-bold text-sm text-background">{{
                 totalRecords
             }}</span>
           </div>

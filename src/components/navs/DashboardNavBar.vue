@@ -19,9 +19,23 @@ const signalr = useSignalR();
 
 signalr.invoke('AddUserToOnlineList', localStorage.getItem("role"), localStorage.getItem("userId"));
 
-signalr.on('Notify', ({ message }) => {
+signalr.on('Notify', (message) => {
   console.log(message);
+  nList.value.push(
+    {
+      'date': message.date,
+      'notifyTitle': message.notifyTitle,
+      'notifyBody': message.notifyBody,
+    }
+  );
+  var audio = new Audio('../../../public/sound/notification.mp3'); // path to file
+  audio.play();
+
 });
+
+
+const nList = ref([]);
+
 
 const fullName = localStorage.getItem('fullName');
 const email = localStorage.getItem('email');
@@ -40,7 +54,7 @@ onClickOutside(
 
 </script>
 <template>
-  <nav class="fixed xl:relative flex items-center px-8 bg-background shadow-md w-full z-50 py-4" v-motion-slide-top>
+  <nav class="fixed xl:relative flex items-center px-8  w-full z-50 py-4" v-motion-slide-top>
     <!-- Path -->
     <div class="flex xl:text-xl text-on_background_variant">
       <span class="hidden xl:flex"> صفحة التحكم / {{ path }} </span>
@@ -88,8 +102,8 @@ onClickOutside(
       <div class="border border-on_background p-2 rounded-2xl ml-4 cursor-pointer"
         @click="(isNotificationMenuOpen = !isNotificationMenuOpen)">
         <div
-          class="rounded-full  bg-red-500 absolute flex items-center justify-center text-on_primary text-xs p-[3px] -mt-4 -mr-3">
-          10
+          class="rounded-full  bg-red-500 absolute flex items-center justify-center text-on_primary text-xs p-1 -mt-4 -mr-3">
+          {{ nList.length }}
         </div>
         <PhBell class="w-7 h-7" />
       </div>
@@ -98,11 +112,12 @@ onClickOutside(
       <div class="z-10 w-80 absolute mt-12 bg-white rounded divide-y divide-gray-100 shadow-md"
         v-if="isNotificationMenuOpen">
         <ul class="py-1 text-sm text-on_background">
-          <a href="#" class="flex items-center justify-center gap-4 py-2 px-4 hover:bg-gray-100 border-b">
+          <a href="#" class="flex items-center justify-center gap-4 py-2 px-4 hover:bg-gray-100 border-b"
+            v-for="item in nList">
             <PhFileText class="w-12 h-12" />
             <div class="space-y-2">
-              <h1 class="font-bold text-base">كسي وجعني بالليل</h1>
-              <p class="text-xs">اوي اوي اوي اوي اوي اوي اوي اوي اوي اوي اوي اوي اوي اوي
+              <h1 class="font-bold text-base">{{ item.notifyTitle }}</h1>
+              <p class="text-xs">{{ item.notifyBody }}
               </p>
             </div>
           </a>
@@ -111,11 +126,12 @@ onClickOutside(
     </div>
     <!-- Log Out -->
     <div class="dropdown inline-block relative ">
-      <div class="flex items-center justify-center gap-2 cursor-pointer hover:brightness-150 duration-300"
+      <div
+        class="flex items-center justify-center gap-2 cursor-pointer hover:brightness-150 duration-300 border border-on_background p-2 rounded-2xl  cursor-pointer"
         ref="logoutButton" @click="isLogoutMenuOpen = !isLogoutMenuOpen">
-        <PhCaretLeft class="h-6 w-6 -rotate-90 fill-primary" />
+        <PhCaretLeft class="h-7 w-7 -rotate-90 fill-primary" />
         <h5 class="text-xl text-primary">{{ email }}</h5>
-        <PhUser class="h-10 w-10" />
+        <PhUser class="h-7 w-7" />
       </div>
       <transition enter-active-class="duration-300 ease-in-out" enter-from-class="-translate-y-2 opacity-0"
         leave-active-class="duration-300 ease-in-out" leave-to-class="-translate-y-2 opacity-0">

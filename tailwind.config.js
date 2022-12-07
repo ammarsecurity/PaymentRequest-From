@@ -6,13 +6,13 @@ module.exports = {
     extend: {
       colors: {
         transparent: 'transparent',
-        primary: '#213263',
-        primary_container: '#b4c5ff',
+        primary: '#0094da',
+        primary_container: '#0094da',
         on_primary: '#fff',
         background: '#fff',
         background_container: '#f5f5f5',
-        on_background: '#111115',
-        on_background_variant: '#757680',
+        on_background: '#213263',
+        on_background_variant: '#213263',
 
         // Dark
         primary_dark: '#5d7dd9',
