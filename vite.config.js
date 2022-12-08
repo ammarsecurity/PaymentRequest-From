@@ -24,6 +24,9 @@ export default defineConfig({
       /* options */
     }),
   ],
+  optimizeDeps: {
+    include: ['node_modules/tiny-emitter'],
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

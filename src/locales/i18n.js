@@ -3,7 +3,7 @@ import { LANG_KEY } from '@/localStorageKeys';
 
 const messages = {
   ar: {
-    home: 'الرئيسية',
+    home: 'Home',
     blogs: 'المقالات',
     news: 'الأخبار',
     instructions: 'تعليمات التقديم',
@@ -17,7 +17,7 @@ const messages = {
     more: 'المزيد',
     video_heading: 'لماذا جواز الكتروني؟',
     video_subheading:
-      'لوريم ايبسوم دولار سيت أميت ,كونسيكتيتور أدايبا يسكينج أليايت,سيت دو أيوسمود تيمبور أنكايديديونتيوت لابوري ات دولار ماجنا أليكيوا. لوريم ايبسوم دولار سيت أميت ,كونسيكتيتور أدايبا يسكينج أليايت,سيت دو أيوسمود تيمبور أنكايديديونتيوت لابوري ات دولار ماجنا أليكيوا.',
+      'لوريم ايبسوم USD سيت أميت ,كونسيكتيتور أدايبا يسكينج أليايت,سيت دو أيوسمود تيمبور أنكايديديونتيوت لابوري ات USD ماجنا أليكيوا. لوريم ايبسوم USD سيت أميت ,كونسيكتيتور أدايبا يسكينج أليايت,سيت دو أيوسمود تيمبور أنكايديديونتيوت لابوري ات USD ماجنا أليكيوا.',
     blogs_heading: 'اخر المقالات',
     blogs_subheading:
       'اطّلع على اخر المقالات المنشورة على منصة الجواز الالكتروني العراقي.',
@@ -32,9 +32,9 @@ const messages = {
     send_us_message: 'أرسل لنا رسالة',
     read_more: 'إقرأ المزيد',
     hot_numbers: 'الارقام الساخنة',
-    full_name: 'الاسم الكامل',
+    full_name: 'Full Name',
     phone_number: 'رقم الهاتف',
-    email: 'البريد الالكتروني',
+    email: 'Email',
     message: 'الرسالة',
     baghdad: 'العراق، بغداد',
     our_location: 'موقعنا',
@@ -62,15 +62,15 @@ const messages = {
 
     // Not Translated To Kurdish
     message_sent: 'تم إرسال الرسالة بنجاح',
-    close: 'اغلاق',
-    required: 'هذا الحقل مطلوب',
+    close: 'Close',
+    required: 'This field is required',
     p_full_name: 'الرجاء كتابة الاسم كامل',
     p_email: 'الرجاء ادخال بريد الكتروني صحيح',
     p_phone: 'الرجاء ادخال رقم هاتف صحيح',
     w_many: 'عدد الكلمات كبير جداً',
     w_little: 'عدد الكلمات قليل جداً',
-    next: 'التالي',
-    previous: 'السابق',
+    next: 'Next',
+    previous: 'Previous',
     of: 'من',
     dark_mode: 'الوضع الليلي',
     light_mode: 'الوضع الصباحي',
@@ -223,8 +223,8 @@ const messages = {
 // localStorage.setItem(LANG_KEY, 'ar');
 let lang = localStorage.getItem(LANG_KEY);
 if (!lang) {
-  lang = 'ar';
-  localStorage.setItem(LANG_KEY, 'ar');
+  lang = 'en';
+  localStorage.setItem(LANG_KEY, 'en');
 }
 
 const i18n = createI18n({

@@ -1,8 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { onClickOutside } from '@vueuse/core';
-import { useSignalR } from '@dreamonkey/vue-signalr';
-
+import emitter from "tiny-emitter/instance";
 const props = defineProps({
   path: String,
 });
@@ -15,13 +14,13 @@ const logout = () => {
   localStorage.clear();
   window.location.href = '/login';
 };
-const signalr = useSignalR();
 
-signalr.invoke('AddUserToOnlineList', localStorage.getItem("role"), localStorage.getItem("userId"));
 
-signalr.on('Notify', (message) => {
-  console.log(message);
-  nList.value.push(
+
+const nList = ref([]);
+
+emitter.on('newNotify', (message) => {
+  nList.value.unshift(
     {
       'date': message.date,
       'notifyTitle': message.notifyTitle,
@@ -30,13 +29,7 @@ signalr.on('Notify', (message) => {
   );
   var audio = new Audio('../../../public/sound/notification.mp3'); // path to file
   audio.play();
-
-});
-
-
-const nList = ref([]);
-
-
+})
 const fullName = localStorage.getItem('fullName');
 const email = localStorage.getItem('email');
 
@@ -57,7 +50,7 @@ onClickOutside(
   <nav class="fixed xl:relative flex items-center px-8  w-full z-50 py-4" v-motion-slide-top>
     <!-- Path -->
     <div class="flex xl:text-xl text-on_background_variant">
-      <span class="hidden xl:flex"> صفحة التحكم / {{ path }} </span>
+      <span class="hidden xl:flex"> Contorl Panel/ {{ path }} </span>
       <!-- Navigation Mobile -->
       <div class="dropdown inline-block relative">
         <button class="rounded inline-flex items-center gap-2 xl:hidden" ref="button" @click="isMenuOpen = !isMenuOpen">
@@ -98,18 +91,18 @@ onClickOutside(
     </div>
 
     <!-- Notifications -->
-    <div class="mr-auto flex items-start justify-center ">
+    <div class="ml-auto mr-[30px]">
       <div class="border border-on_background p-2 rounded-2xl ml-4 cursor-pointer"
         @click="(isNotificationMenuOpen = !isNotificationMenuOpen)">
         <div
-          class="rounded-full  bg-red-500 absolute flex items-center justify-center text-on_primary text-xs p-1 -mt-4 -mr-3">
+          class="rounded-full  bg-red-500 absolute flex items-center justify-center text-on_primary text-xs p-1 -mt-4 ml-7">
           {{ nList.length }}
         </div>
         <PhBell class="w-7 h-7" />
       </div>
 
       <!-- Dropdown menu -->
-      <div class="z-10 w-80 absolute mt-12 bg-white rounded divide-y divide-gray-100 shadow-md"
+      <div class="z-10 w-80 absolute mt-5 bg-white rounded divide-y divide-gray-100 shadow-md right-[7rem]"
         v-if="isNotificationMenuOpen">
         <ul class="py-1 text-sm text-on_background">
           <a href="#" class="flex items-center justify-center gap-4 py-2 px-4 hover:bg-gray-100 border-b"

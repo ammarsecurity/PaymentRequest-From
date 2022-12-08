@@ -17,11 +17,31 @@ const validationSchemaEdit = ref({
   purposeOfPaymentAndDetails: yup.string().required('This field is required'),
 });
 /* ------------------------ Axios ----------------------- */
-
+const isAddModalOpen = ref(false);
+const isEditModalOpen = ref(false);
+const isInfoModalOpen = ref(false);
 const isError = ref(false);
 const isLoading = ref(false);
-const isAddSuccess = ref(false);
-const isEditSuccess = ref(false);
+
+const nWords = ref('');
+
+var a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
+var b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+
+function inWords(n) {
+  var num = n.target.value;
+  if ((num = num.toString()).length > 9) return 'overflow';
+  n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+  if (!n) return; var str = '';
+  str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'billion ' : '';
+  str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'million ' : '';
+  str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
+  str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
+  str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'only ' : '';
+  nWords.value = str;
+  // return str;
+}
+
 
 // POST
 const createRequestForm = ref({
@@ -47,10 +67,7 @@ const searchform = ref({
 });
 const search = async (value) => {
   getRequest();
-  pageNumber = 1;
-};
-const dateTime = async (value) => {
-  return moment(value).format("YYYY-MM-DD");
+  pageNumber.value = 1;
 };
 
 
@@ -208,6 +225,7 @@ const editSubmit = async (value) => {
         cancelButtonColor: '#213263',
         cancelButtonText: 'Close',
       });
+      return;
     });
   return;
 };
@@ -309,25 +327,19 @@ const showRequestInfo = (index, status, id, isFinished) => {
   requeststatus.value = status;
   RequestisFinished.value = isFinished;
   const info = list.value[index];
-
   (requestInfo.value.beneficaryName = info.beneficaryName),
     (requestInfo.value.otherInfo = info.otherInfo),
     (requestInfo.value.invoiceDate = info.invoiceDate),
     (requestInfo.value.dueDate = info.dueDate),
     (requestInfo.value.paymentBudget = info.paymentBudget),
-    (requestInfo.value.purposeOfPaymentAndDetails =
-      info.purposeOfPaymentAndDetails),
+    (requestInfo.value.purposeOfPaymentAndDetails = info.purposeOfPaymentAndDetails),
     (requestInfo.value.requestLoction = info.requestLoction),
-    (requestInfo.value.paymentBudgetIfFalseJustification =
-      info.paymentBudgetIfFalseJustification),
+    (requestInfo.value.paymentBudgetIfFalseJustification = info.paymentBudgetIfFalseJustification),
     (requestInfo.value.lastInfo = info.lastInfo),
     (requestInfo.value.paymentMethod = info.paymentMethod);
-};
+}
 
-/* ------------------------ Index ----------------------- */
-const isAddModalOpen = ref(false);
-const isEditModalOpen = ref(false);
-const isInfoModalOpen = ref(false);
+
 </script>
 <template>
   <!-- Post -->
@@ -344,10 +356,10 @@ const isInfoModalOpen = ref(false);
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Amount</label>
 
-        <input @keypress="isNumber($event)" class="border  border-on_background_variant rounded-full px-4 py-2
+        <input @keypress="inWords($event)" class="border  border-on_background_variant rounded-full px-4 py-2
           focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]" name="requestedAmount"
           v-model="createRequestForm.requestedAmount" type="text">
-
+        <span class="text-red-500">{{ nWords }}</span>
         <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
       </div>
 
@@ -449,7 +461,7 @@ const isInfoModalOpen = ref(false);
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="otherInfo" component="div"></ErrorMessage>
       </div>
-      <MainButton class="col-span-2" text="Add" type="submit" />
+      <MainButton class="col-span-2 mt-5" text="Add" type="submit" />
     </Form>
   </MainModal>
 
@@ -564,7 +576,7 @@ const isInfoModalOpen = ref(false);
         <ErrorMessage class="text-red-600 text-lg" name="otherInfo" component="div"></ErrorMessage>
       </div>
 
-      <MainButton class="col-span-2" text="Update" type="submit" />
+      <MainButton class="col-span-2 mt-5" text="Add" type="submit" />
     </Form>
   </MainModal>
 
@@ -617,11 +629,12 @@ const isInfoModalOpen = ref(false);
       </div>
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Due date</label>
-        <p>{{ (requestInfo.dueDate).toString.split('T')[0] }}</p>
+        <p>{{ dayjs(requestInfo.dueDate).format('ddd, DD MMM YYYY') }} </p>
+
       </div>
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Invoice Date</label>
-        <p>{{ requestInfo.invoiceDate }}</p>
+        <p>{{ dayjs(requestInfo.invoiceDate).format('ddd, DD MMM YYYY') }} </p>
       </div>
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Beneficary Name</label>
@@ -758,7 +771,9 @@ const isInfoModalOpen = ref(false);
                 <td class="xl:py-3 xl:px-6 py-2 px-4  flex justify-center align-middle h-[70px] items-center">
                   <h1
                     class="text-center xl:text-start bg-primary_container text-background max-w-max rounded-2xl px-2 py-2">
-                    {{ item.requestedAmount }} - {{ item.amountCurrency }}
+                    {{ item.requestedAmount == "" ? item.requestedAmount :
+                        item.requestedAmount?.toString().match(/.{1,3}/g).join()
+                    }} {{ item.amountCurrency }}
                   </h1>
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]">

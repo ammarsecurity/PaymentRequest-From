@@ -2,11 +2,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 :root {
   font-family: Cairo, sans-serif;
   --white: #ffffff;
   --dark: #111115;
-  --primary: #213263;
+  --primary: #0094da;
 }
 * {
   margin: 0;

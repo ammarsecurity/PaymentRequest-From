@@ -8,12 +8,12 @@ import dayjs from 'dayjs';
 
 /* -------------------- Vee Validate -------------------- */
 const validationSchema = ref({
-  FullName: yup.string().required('هذا الحقل مطلوب'),
-  Password: yup.string().required('هذا الحقل مطلوب'),
+  FullName: yup.string().required('This field is required'),
+  Password: yup.string().required('This field is required'),
 
 });
 const validationSchemaEdit = ref({
-  FullName: yup.string().required('هذا الحقل مطلوب'),
+  FullName: yup.string().required('This field is required'),
 });
 /* ------------------------ Axios ----------------------- */
 
@@ -33,7 +33,7 @@ const submit = async (value) => {
 
   const formData = new FormData();
   formData.append('CompanyLogo', createUserForm.value.CompanyLogo);
-  formData.append('FullName', createUserForm.value.Email);
+  formData.append('FullName', createUserForm.value.FullName);
   formData.append('UserRole', createUserForm.value.UserRole);
   formData.append('Email', createUserForm.value.Email);
   formData.append('CompanyName', createUserForm.value.CompanyName);
@@ -44,22 +44,26 @@ const submit = async (value) => {
 
       isLoading.value = false;
       isAddModalOpen.value = false;
-      isAddSuccess.value = true;
-      setTimeout(() => {
-        isAddSuccess.value = false;
-      }, 4000);
-      createUserForm.value = {
-        FullName: '',
-        UserRole: '',
-        Email: '',
-        Password: '',
-        CompanyName: '',
-        CompanyLogo: ''
-      };
+      Swal.fire({
+        title: 'The account has been Added successfully',
+        icon: 'success',
+        showCancelButton: true,
+        showConfirmButton: false,
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Close',
+      }),
+        createUserForm.value = {
+          FullName: '',
+          UserRole: '',
+          Email: '',
+          Password: '',
+          CompanyName: '',
+          CompanyLogo: ''
+        };
       getUsers();
     })
     .catch((error) => {
-
+      isLoading.value = true;
       console.log(error)
     });
 
@@ -91,7 +95,7 @@ const editSubmit = async (value) => {
 
   const formData = new FormData();
   formData.append('CompanyLogo', editUser.value.CompanyLogo);
-  formData.append('FullName', editUser.value.Email);
+  formData.append('FullName', editUser.value.FullName);
   formData.append('UserRole', editUser.value.UserRole);
   formData.append('Email', editUser.value.Email);
   formData.append('CompanyName', editUser.value.CompanyName);
@@ -102,21 +106,26 @@ const editSubmit = async (value) => {
 
       isLoading.value = false;
       isEditModalOpen.value = false;
-      isEditSuccess.value = true;
-      setTimeout(() => {
-        isEditSuccess.value = false;
-      }, 4000);
+      Swal.fire({
+        title: 'The account has been updated successfully',
+        icon: 'success',
+        showCancelButton: true,
+        showConfirmButton: false,
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Close',
+      }),
 
-      getUsers();
+        getUsers();
     })
     .catch((error) => {
+      isLoading.value = false;
       Swal.fire({
-        title: 'خطأ',
-        text: 'حدث خطأ اثناء تعديل الحساب',
+        title: 'Error',
+        text: 'An error occurred while creating the account',
         icon: 'error',
         showCancelButton: true,
         cancelButtonColor: '#213263',
-        cancelButtonText: 'اغلاق',
+        cancelButtonText: 'Close',
       });
     });
   return;
@@ -185,14 +194,14 @@ if (role == 'Accounter') {
 
 const deleteUser = async (value) => {
   Swal.fire({
-    title: 'هل انت متأكد من مسح الحساب',
-    text: 'بعد المسح ﻻ يمكن استرجاع الحساب',
+    title: 'Are you sure to delete the account?',
+    text: 'After deletion, the account cannot be recovered',
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#ef4444',
     cancelButtonColor: '#213263',
-    confirmButtonText: 'نعم، امسح',
-    cancelButtonText: 'الغاء',
+    confirmButtonText: 'yas، Deleted',
+    cancelButtonText: 'Close',
   }).then((result) => {
     if (result.isConfirmed) {
       isLoading.value = true;
@@ -201,12 +210,12 @@ const deleteUser = async (value) => {
         .post('Main/DeleteUser?id=' + value)
         .then(({ data }) => {
           Swal.fire({
-            title: 'تم مسح الحساب بنجاح',
+            title: 'The account has been deleted successfully',
             icon: 'success',
             showCancelButton: true,
             showConfirmButton: false,
             cancelButtonColor: '#d33',
-            cancelButtonText: 'اغلاق',
+            cancelButtonText: 'Close',
           }),
             (isLoading.value = false);
           getUsers();
@@ -224,18 +233,18 @@ const isEditModalOpen = ref(false);
 </script>
 <template>
   <!-- Post -->
-  <StateModal v-if="isAddSuccess" type="success" @close="isAddSuccess = false" title="تم اضافة الحساب  بنجاح" />
+
   <!-- Edit -->
-  <StateModal v-if="isEditSuccess" @close="isEditSuccess = false" title="تم تعديل الحساب بنجاح" />
+  <StateModal v-if="isEditSuccess" @close="isEditSuccess = false" title="Successfully " />
   <MainLoader v-if="isLoading" />
 
   <!-- Modals -->
   <!-- Add Modal -->
-  <MainModal text="اضافة حساب جديد" v-if="isAddModalOpen" @close="isAddModalOpen = false">
-    <Form class="flex flex-col gap-4" dir="rtl" :validationSchema="validationSchema" @submit="submit">
+  <MainModal text="Add a new account" v-if="isAddModalOpen" @close="isAddModalOpen = false">
+    <Form class="flex flex-col gap-4" :validationSchema="validationSchema" @submit="submit">
       <!-- Photo -->
       <div class="flex flex-col gap-2" v-if="(isUser == false)">
-        <label class="text-xl text-primary">الصورة او الشعار</label>
+        <label class="text-xl text-primary">Picture or logo</label>
         <Field
           class="border border-on_background_variant rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="photo" v-model="createUserForm.CompanyLogo" @change="uploadPhoto('add')" type="file">
@@ -245,7 +254,7 @@ const isEditModalOpen = ref(false);
 
       <!-- Title -->
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">الاسم الكامل</label>
+        <label class="text-xl text-primary">Full Name</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="FullName" v-model="createUserForm.FullName" type="text">
@@ -255,7 +264,7 @@ const isEditModalOpen = ref(false);
 
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">البريد الالكتروني</label>
+        <label class="text-xl text-primary">Email</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="Email" v-model="createUserForm.Email" type="text">
@@ -264,7 +273,7 @@ const isEditModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">الرمز السري</label>
+        <label class="text-xl text-primary">Password</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="Password" v-model="createUserForm.Password" type="password">
@@ -274,19 +283,19 @@ const isEditModalOpen = ref(false);
 
 
       <div class="flex flex-col gap-2" v-if="(isUser == false)">
-        <label class="text-xl text-primary">الفئة</label>
+        <label class="text-xl text-primary">Type</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="category" v-model="createUserForm.UserRole" type="select" as="select">
-          <option value="1">محاسب</option>
+          name="UserRole" v-model="createUserForm.UserRole" type="select" as="select">
+          <option value="1">Accountant</option>
           <option value="4">CFO</option>
-          <option value="2">شركة</option>
+          <option value="2">Company</option>
 
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="UserRole" component="div"></ErrorMessage>
       </div>
       <div class="flex flex-col gap-2" v-if="(isUser == false)">
-        <label class="text-xl text-primary">اسم الشركة</label>
+        <label class="text-xl text-primary">Company Name</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="CompanyName" v-model="createUserForm.CompanyName" type="text">
@@ -294,17 +303,17 @@ const isEditModalOpen = ref(false);
         <ErrorMessage class="text-red-600 text-lg" name="CompanyName" component="div"></ErrorMessage>
       </div>
 
-      <MainButton text="اضافة" type="submit" />
+      <MainButton text="Add" type="submit" />
     </Form>
   </MainModal>
 
   <!-- Edit Modal -->
-  <MainModal text="تعديل الحساب" v-if="isEditModalOpen" @close="isEditModalOpen = false">
+  <MainModal text="UpdateUser" v-if="isEditModalOpen" @close="isEditModalOpen = false">
 
-    <Form class="flex flex-col gap-4" dir="rtl" :validationSchema="validationSchemaEdit" @submit="editSubmit">
+    <Form class="flex flex-col gap-4" :validationSchema="validationSchemaEdit" @submit="editSubmit">
       <!-- Photo -->
       <div class="flex flex-col gap-2" v-if="(isUser == false)">
-        <label class="text-xl text-primary">الصورة او الشعار</label>
+        <label class="text-xl text-primary">Picture or logo</label>
         <Field
           class="border border-on_background_variant rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="photo" v-model="editUser.CompanyLogo" @change="uploadPhoto('add')" type="file">
@@ -314,7 +323,7 @@ const isEditModalOpen = ref(false);
 
       <!-- Title -->
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">الاسم الكامل</label>
+        <label class="text-xl text-primary">Full Name</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="FullName" v-model="editUser.FullName" type="text">
@@ -324,7 +333,7 @@ const isEditModalOpen = ref(false);
 
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">البريد الالكتروني</label>
+        <label class="text-xl text-primary">Email</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="Email" v-model="editUser.Email" type="text">
@@ -333,7 +342,7 @@ const isEditModalOpen = ref(false);
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">الرمز السري</label>
+        <label class="text-xl text-primary">Password</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="Password" v-model="editUser.Password" type="password">
@@ -343,19 +352,19 @@ const isEditModalOpen = ref(false);
 
 
       <div class="flex flex-col gap-2" v-if="(isUser == false)">
-        <label class="text-xl text-primary">الفئة</label>
+        <label class="text-xl text-primary">Type</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="category" v-model="editUser.UserRole" type="select" as="select">
-          <option value="1">محاسب</option>
+          name="UserRole" v-model="editUser.UserRole" type="select" as="select">
+          <option value="1">Accountant</option>
           <option value="4">CFO</option>
-          <option value="2">شركة</option>
+          <option value="2">Company</option>
 
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="UserRole" component="div"></ErrorMessage>
       </div>
       <div class="flex flex-col gap-2" v-if="(isUser == false)">
-        <label class="text-xl text-primary">اسم الشركة</label>
+        <label class="text-xl text-primary">Company Name</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="CompanyName" v-model="editUser.CompanyName" type="text">
@@ -363,7 +372,7 @@ const isEditModalOpen = ref(false);
         <ErrorMessage class="text-red-600 text-lg" name="CompanyName" component="div"></ErrorMessage>
       </div>
 
-      <MainButton text="تعديل" type="submit" />
+      <MainButton text="Update" type="submit" />
     </Form>
 
   </MainModal>
@@ -373,7 +382,7 @@ const isEditModalOpen = ref(false);
     <div class="flex flex-col w-full">
       <DashboardNavBar path="الحسابات" />
       <div class="flex flex-col px-4 xl:px-8 mt-32 xl:mt-8 gap-4">
-        <MainButton @click="isAddModalOpen = true" text="اضافة حساب جديد">
+        <MainButton @click="isAddModalOpen = true" text="Add a new account">
         </MainButton>
 
         <!-- Table -->
@@ -385,25 +394,25 @@ const isEditModalOpen = ref(false);
                   #
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  صورة او الشعار
+                  Picture or logo
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  الاسم الكامل
+                  Full Name
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  البريد الالكتروني
+                  Email
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  اسم الشركة
+                  Company Name
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  الفئة
+                  Type
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  تاريخ الاضافة
+                  Added date
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4 rounded-tl-xl">
-                  الاجرائات
+                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4 rounded-tr-xl">
+                  Options
                 </th>
               </tr>
             </thead>
@@ -414,7 +423,7 @@ const isEditModalOpen = ref(false);
                   {{ index + 1 + paginationIndex }}
                 </td>
                 <th scope="row" class="whitespace-nowrap">
-                  <img class="h-16 w-20 object-cover rounded-lg my-1" :src="item.companyLogo" alt="" />
+                  <img class="h-16 w-16 object-cover rounded-[50px] my-1" :src="item.companyLogo" alt="" />
                 </th>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold">
                   {{ item.fullName }}
@@ -430,16 +439,16 @@ const isEditModalOpen = ref(false);
                   </h1>
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="(item.userRole == 1)">
-                  محاسب
+                  Accountant
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="(item.userRole == 2)">
-                  شركة
+                  Company
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="(item.userRole == 4)">
                   CFO
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="(item.userRole == 3)">
-                  حساب فرعي
+                  Subuser
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4">
                   {{ dayjs(item.created).format('ddd, DD MMM YYYY') }}
@@ -465,21 +474,21 @@ const isEditModalOpen = ref(false);
                   ? totalRecords
                   : paginationIndex + 10
             }}</span>
-            <span class="text-on_background">من</span>
+            <span class="text-on_background">From</span>
             <span class="font-bold text-sm text-background">{{
                 totalRecords
             }}</span>
           </div>
           <ul class="flex items-center">
             <button :disabled="paginationIndex <= 1"
-              class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2 rounded-r-xl xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
+              class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2 rounded-l-xl xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
               @click="previousPage">
-              السابق
+              Previous
             </button>
             <button :disabled="paginationIndex + 10 >= totalRecords"
-              class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2 rounded-l-xl xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
+              class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2 rounded-r-xl xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
               @click="nextPage">
-              التالي
+              Next
             </button>
           </ul>
         </nav>

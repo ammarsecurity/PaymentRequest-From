@@ -31,13 +31,15 @@ const options = {
 
 import { VueSignalR } from '@dreamonkey/vue-signalr';
 import { HubConnectionBuilder } from '@microsoft/signalr';
+import VueApexCharts from 'vue3-apexcharts/src/index';
 
 const connection = new HubConnectionBuilder()
-  .withUrl('https://localhost:7219/Notify')
+  .withUrl('https://accounter-api.lab-logic.com/Notify')
   .build();
 
 const app = createApp(App);
 app.use(MotionPlugin);
+app.component(VueApexCharts);
 app.use(createPinia());
 app.use(router);
 app.use(VueSignalR, { connection });

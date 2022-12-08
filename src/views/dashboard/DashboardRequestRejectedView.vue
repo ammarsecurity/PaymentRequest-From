@@ -1,11 +1,12 @@
 <script setup>
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
-import { axiosInstance } from '@/api/axiosInstance.js';
+import { axiosInstance, baseURL } from '@/api/axiosInstance.js';
 import { ref } from 'vue';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
 import { computed } from '@vue/reactivity';
+import printJS from 'print-js';
 
 /* -------------------- Vee Validate -------------------- */
 
@@ -27,9 +28,9 @@ const createRequestForm = ref({
   amountCurrency: '',
   purposeOfPaymentAndDetails: '',
   otherInfo: '',
-  paymentBudget: true,
+  paymentBudget: '',
   paymentBudgetIfFalseJustification: '',
-  paymentMethod: '',
+  paymentMethod: true,
   invoiceNumber: '',
   invoiceDate: '',
   dueDate: '',
@@ -97,7 +98,7 @@ const submit = async (value) => {
       getRequest();
     })
     .catch((error) => {
-
+      console.log(error);
       isLoading.value = false;
       Swal.fire({
         title: 'Error',
@@ -112,21 +113,25 @@ const submit = async (value) => {
   return;
 };
 
-
-
 const lastInfo = ref('Nothing');
 const requestId = ref('');
 const requeststatus = ref('');
 const paymentBudgetReason = computed(() => {
   return createRequestForm.value.paymentBudget;
-})
-
+});
 
 const editStatusRequest = async (value) => {
   isLoading.value = true;
   isError.value = false;
   axiosInstance
-    .post('Main/EditRequset?id=' + requestId.value + '&message=' + lastInfo.value + '&status=' + value)
+    .post(
+      'Main/EditRequset?id=' +
+      requestId.value +
+      '&message=' +
+      lastInfo.value +
+      '&status=' +
+      value
+    )
     .then(({ data }) => {
       isLoading.value = false;
       isInfoModalOpen.value = false;
@@ -155,6 +160,15 @@ const editStatusRequest = async (value) => {
   return;
 };
 
+const print = async (id) => {
+  printJS({
+    printable: `${baseURL}Main/GetReport?id=${id}`,
+    type: 'pdf',
+    modalMessage: 'Preparing for printing ...',
+    showModal: true,
+  });
+};
+
 const editSubmit = async (value) => {
   isLoading.value = true;
   isError.value = false;
@@ -172,7 +186,6 @@ const editSubmit = async (value) => {
         cancelButtonColor: '#d33',
         cancelButtonText: 'Close',
       }),
-
         getRequest();
     })
     .catch((error) => {
@@ -196,12 +209,11 @@ const totalRecords = ref('');
 const pageSize = ref(10);
 const pageNumber = ref(1);
 
-
 const getRequest = () => {
   isLoading.value = true;
   axiosInstance
     .get(
-      `Main/GetSupUserRequest?userRequest=${isUser}&PageNumber=${pageNumber.value}&PageSize=${pageSize.value}&date=${searchform.value.date}&companyName=${searchform.value.companyName}&requestNumber=${searchform.value.requestNumber}&status=${searchform.value.status}&fullName=${searchform.value.fullName}`
+      `Main/GetRequset?userRequest=${isUser}&PageNumber=${pageNumber.value}&PageSize=${pageSize.value}&date=${searchform.value.date}&companyName=${searchform.value.companyName}&requestNumber=${searchform.value.requestNumber}&status=Reject&fullName=${searchform.value.fullName}&isAll=true`
     )
     .then(({ data }) => {
       list.value = data.data;
@@ -211,6 +223,8 @@ const getRequest = () => {
       isLoading.value = false;
     })
     .catch((error) => {
+      isLoading.value = false;
+      console.log(error);
       isLoading.value = false;
       Swal.fire({
         title: 'Error',
@@ -246,12 +260,12 @@ const editRequest = ref({
   BeneficaryName: '',
 });
 
-
 const editRequestInfo = (index) => {
   const info = list.value[index];
   editRequest.value.id = info.id;
   editRequest.value.requestedAmount = info.requestedAmount;
-  editRequest.value.purposeOfPaymentAndDetails = info.purposeOfPaymentAndDetails;
+  editRequest.value.purposeOfPaymentAndDetails =
+    info.purposeOfPaymentAndDetails;
   editRequest.value.otherInfo = info.otherInfo;
   editRequest.value.amountCurrency = info.amountCurrency;
   editRequest.value.invoiceNumber = info.invoiceNumber;
@@ -261,9 +275,10 @@ const editRequestInfo = (index) => {
   editRequest.value.paymentMethod = info.paymentMethod;
   editRequest.value.dueDate = info.dueDate.toString().split('T')[0];
   editRequest.value.paymentBudget = info.paymentBudget;
-  editRequest.value.paymentBudgetIfFalseJustification = info.paymentBudgetIfFalseJustification;
+  editRequest.value.paymentBudgetIfFalseJustification =
+    info.paymentBudgetIfFalseJustification;
   editRequest.value.invoiceDate = info.invoiceDate.toString().split('T')[0];
-  editRequest.value.BeneficaryName = info.beneficaryName
+  editRequest.value.BeneficaryName = info.beneficaryName;
   editRequest.value.id = info.id;
 };
 
@@ -278,10 +293,11 @@ const requestInfo = ref({
   requestLoction: '',
 });
 
-
-const showRequestInfo = (index, status, id) => {
+const RequestisFinished = ref('');
+const showRequestInfo = (index, status, id, isFinished) => {
   requestId.value = id;
   requeststatus.value = status;
+  RequestisFinished.value = isFinished;
   const info = list.value[index];
 
   (requestInfo.value.beneficaryName = info.beneficaryName),
@@ -319,7 +335,7 @@ const isInfoModalOpen = ref(false);
         <label class="text-xl text-primary">Amount</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="requestedAmount" v-model="createRequestForm.requestedAmount" type="text">
+          name="requestedAmount" v-model="createRequestForm.requestedAmount" type="number">
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
       </div>
@@ -353,8 +369,8 @@ const isInfoModalOpen = ref(false);
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="paymentBudget" v-model="createRequestForm.paymentBudget" type="select" as="select">
-          <option :value=true>yas</option>
-          <option :value=false>No</option>
+          <option :value="true">yas</option>
+          <option :value="false">لا</option>
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="paymentBudget" component="div"></ErrorMessage>
       </div>
@@ -434,7 +450,7 @@ const isInfoModalOpen = ref(false);
         <label class="text-xl text-primary">Amount</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="requestedAmount" v-model="editRequest.requestedAmount" type="text">
+          name="requestedAmount" v-model="editRequest.requestedAmount" type="number">
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
       </div>
@@ -468,8 +484,8 @@ const isInfoModalOpen = ref(false);
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="paymentBudget" v-model="editRequest.paymentBudget" type="select" as="select">
-          <option :value=true>yas</option>
-          <option :value=false>No</option>
+          <option :value="true">yas</option>
+          <option :value="false">لا</option>
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="paymentBudget" component="div"></ErrorMessage>
       </div>
@@ -543,8 +559,8 @@ const isInfoModalOpen = ref(false);
 
   <MainModal styles="w-[40vw] h-[70vh]" text="Order details" v-if="isInfoModalOpen" @close="isInfoModalOpen = false">
     <div class="grid grid-cols-2 flex-col gap-16" dir="rtl">
-      <div class="flex flex-col col-span-2 gap-4" v-if="requeststatus == 'WaitForCompanyManger'">
-        <div class="flex flex-col gap-2">
+      <div class="flex flex-col col-span-2 gap-4" v-if="RequestisFinished != true">
+        <div class="flex flex-col gap-2" v-if="role != 'SupUser' && role != 'User'">
           <label class="text-xl text-primary">Note</label>
           <Field
             class="border border-on_background_variant bg-background rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300"
@@ -553,13 +569,16 @@ const isInfoModalOpen = ref(false);
           <ErrorMessage class="text-red-600 text-lg" name="lastInfo" component="div"></ErrorMessage>
         </div>
         <div class="flex gap-4 w-full col-span-2">
+          <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForCFO')"
+            class="bg-green-600 border-none" text="Approval"></MainButton>
 
-          <MainButton v-if="role == 'User'" @click="editStatusRequest('Wait')" class="bg-green-600 border-none"
-            text="Approval"></MainButton>
+          <MainButton v-if="role == 'CFO'" @click="editStatusRequest('ApprovalFromCFO')"
+            class="bg-green-600 border-none" text="Approval"></MainButton>
 
-          <MainButton class="bg-red-600 border-none" v-if="role == 'User'" @click="editStatusRequest('Reject')"
-            text="Reject"></MainButton>
-
+          <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForEdit')"
+            class="bg-orange-600 border-none" text="Return for modification"></MainButton>
+          <MainButton class="bg-red-600 border-none" v-if="role != 'User' && (role == 'CFO' || role == 'Accounter')"
+            @click="editStatusRequest('Reject')" text="Reject"></MainButton>
         </div>
       </div>
 
@@ -587,6 +606,7 @@ const isInfoModalOpen = ref(false);
         <label class="text-xl text-primary">Due date
         </label>
         <p>{{ dayjs(requestInfo.dueDate).format('ddd, DD MMM YYYY') }} </p>
+
       </div>
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Invoice Date</label>
@@ -611,7 +631,7 @@ const isInfoModalOpen = ref(false);
   <div class="flex xl:overflow-hidden xl:h-screen relative z-20" v-motion-fade>
     <DashboardSidebar class="hidden xl:block" />
     <div class="flex flex-col w-full">
-      <DashboardNavBar path="Pending Orders" />
+      <DashboardNavBar path="Reports" />
       <div class="flex flex-col px-4 xl:px-8 mt-32 xl:mt-8 gap-4">
         <div class="flex flex-col xl:flex-row w-full xl:justify-between xl:items-center">
           <div class="grid grid-cols-2 xl:flex xl:flex-row gap-4 items-center">
@@ -667,9 +687,8 @@ const isInfoModalOpen = ref(false);
             </div>
           </div>
 
-          <!-- <MainButton class="h-12 mt-4 xl:mt-0" v-if="showAddOrder" @click="isAddModalOpen = true"
-            text="Add new order">
-          </MainButton> -->
+          <MainButton class="h-12 mt-4 xl:mt-0" v-if="showAddOrder" @click="isAddModalOpen = true" text="Add new order">
+          </MainButton>
         </div>
         <!-- Table -->
 
@@ -711,8 +730,7 @@ const isInfoModalOpen = ref(false);
               </tr>
             </thead>
             <tbody>
-              <tr class="bg-white border-b odd:bg-gray-200 even:bg-background text-sm" v-for="(item, index) in list"
-                :key="item.id">
+              <tr class="bg-white border-b odd:bg-gray-200 even:bg-background text-sm" v-for="(item, index) in list">
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold text-primary">
                   {{ index + 1 + paginationIndex }}
                 </td>
@@ -770,13 +788,23 @@ const isInfoModalOpen = ref(false);
                       class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer" @click="
                         editRequestInfo(index), (isEditModalOpen = true)
                       " />
+
                     <PhEye class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer"
                       @click="
-                        showRequestInfo(index, item.status, item.id),
+                        showRequestInfo(
+                          index,
+                          item.status,
+                          item.id,
+                          item.isFinished
+                        ),
                         (isInfoModalOpen = true)
                       " />
+                    <PhPrinterDuotone @click="print(item.id)" v-if="
+                      item.isFinished == true &&
+                      item.requestLoction == 1 &&
+                      role == 'Accounter'
+                    " class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer" />
                   </div>
-
                 </td>
               </tr>
             </tbody>

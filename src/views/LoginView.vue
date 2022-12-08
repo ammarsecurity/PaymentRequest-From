@@ -6,8 +6,8 @@ import { axiosInstance } from '@/api/axiosInstance.js';
 
 /* -------------------- Vee Validate -------------------- */
 const validationSchema = ref({
-  username: yup.string().required('هذا الحقل مطلوب'),
-  password: yup.string().required('هذا الحقل مطلوب'),
+  username: yup.string().required('This field is required'),
+  password: yup.string().required('This field is required'),
 });
 
 const email = ref('');
@@ -33,14 +33,14 @@ const login = () => {
       window.localStorage.setItem('userId', data.data.userId);
 
 
-      window.location.href = '/dashboard/request';
-      email.value = '';
-      password.value = '';
+      window.location.href = '/dashboard/home';
+      // email.value = '';
+      // password.value = '';
     })
     .catch((error) => {
       isLoading.value = false;
       isError.value = true;
-      errorMessage.value = "خطا في معلومات الدخول";
+      errorMessage.value = "Error login information";
     });
 };
 </script>
@@ -49,25 +49,28 @@ const login = () => {
   <div class="relative z-20 flex flex-col items-center min-h-screen">
 
     <div class="flex flex-col items-center justify-center gap-4 my-32">
-      <h1 class="text-primary dark:text-primary_dark text-3xl max-w-[14ch] leading-[1.5em] text-center font-bold">
-        تسجيل الدخول الى لوحة التحكم
+      <a class="flex items-center justify-center" href="/">
+        <img class="w-[300px]" src="/images/logos/logo.png" alt="" />
+      </a>
+      <h1 class="text-primary dark:text-primary_dark text-3xl max-w-[50ch] leading-[1.5em] text-center font-bold">
+        Log in to the control panel
       </h1>
       <Form class="flex flex-col item gap-4" dir="rtl" :validationSchema="validationSchema" @submit="login">
         <!-- Username -->
-        <div class="flex flex-col gap-2">
-          <label class="text-xl text-primary dark:text-primary_dark">البريد الالكتروني</label>
+        <div class="flex flex-col gap-2 text-left">
+          <label class="text-xl text-primary dark:text-primary_dark">Email</label>
           <Field
-            class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 w-[30rem]"
+            class="text-left border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 w-[30rem]"
             name="username" v-model="email" type="text">
           </Field>
           <ErrorMessage class="text-red-600 text-lg" name="username" component="div"></ErrorMessage>
         </div>
 
         <!-- Password -->
-        <div class="flex flex-col gap-2">
-          <label class="text-xl text-primary dark:text-primary_dark">الرمز السري </label>
+        <div class="flex flex-col gap-2 text-left">
+          <label class="text-xl text-primary dark:text-primary_dark">Password</label>
           <Field
-            class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 w-[30rem]"
+            class="text-left border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 w-[30rem]"
             name="password" v-model="password" type="password">
           </Field>
           <ErrorMessage class="text-red-600 text-lg" name="password" component="div"></ErrorMessage>
@@ -76,7 +79,7 @@ const login = () => {
           {{ errorMessage }}
         </p>
 
-        <MainButton class="mt-2" text="تسجيل الدخول" type="submit" />
+        <MainButton class="mt-2" text="Login" type="submit" />
       </Form>
     </div>
   </div>

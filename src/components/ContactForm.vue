@@ -96,7 +96,7 @@ const lang = computed(() => {
           <ErrorMessage class="text-red-600 text-lg" name="fullName" component="div"></ErrorMessage>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="gap-4">
           <!-- Phone Number -->
           <div class="flex flex-col gap-2 w-full">
             <label class="text-xl text-primary dark:text-primary_dark">{{
@@ -273,5 +273,5 @@ const lang = computed(() => {
     </div>
   </div>
   <StateModal v-if="isSuccess" type="success" title="تم إرسال الرسالة بنجاح" />
-  <StateModal v-if="isError" type="error" title="خطأ في إرسال الرسالة" />
+  <StateModal v-if="isError" type="error" title="Error في إرسال الرسالة" />
 </template>
