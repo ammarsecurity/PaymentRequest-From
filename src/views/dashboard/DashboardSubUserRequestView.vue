@@ -613,7 +613,7 @@ const isInfoModalOpen = ref(false);
       <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3">
         <label class="text-xl text-primary">Payment Budget</label>
         <hr>
-        <p v-if="requestInfo.paymentBudget == false">لا</p>
+        <p v-if="requestInfo.paymentBudget == false">No</p>
         <p v-else>yas</p>
       </div>
       <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3" v-if="requestInfo.paymentBudget == false">

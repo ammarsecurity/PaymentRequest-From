@@ -380,7 +380,7 @@ const isEditModalOpen = ref(false);
   <div class="flex xl:overflow-hidden xl:h-screen relative z-20" v-motion-fade>
     <DashboardSidebar class="hidden xl:block" />
     <div class="flex flex-col w-full">
-      <DashboardNavBar path="الحسابات" />
+      <DashboardNavBar path="Users" />
       <div class="flex flex-col px-4 xl:px-8 mt-32 xl:mt-8 gap-4">
         <MainButton @click="isAddModalOpen = true" text="Add a new account">
         </MainButton>
