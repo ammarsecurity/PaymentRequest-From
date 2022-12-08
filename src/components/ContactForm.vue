@@ -176,7 +176,7 @@ const lang = computed(() => {
         </div>
 
         <!-- Contact Information -->
-        <div class="flex flex-col xl:flex-row xl:gap-16">
+        <div class="flex flex-col xl:flex-row xl:gap-5">
           <!-- Emails -->
           <div class="flex flex-col gap-4 mt-8">
             <h4 class="text-2xl text-on_background dark:text-on_background_dark">

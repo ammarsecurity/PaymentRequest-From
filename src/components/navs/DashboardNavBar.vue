@@ -104,7 +104,7 @@ onClickOutside(
       <!-- Dropdown menu -->
       <div class="z-10 w-80 absolute mt-5 bg-white rounded divide-y divide-gray-100 shadow-md right-[7rem]"
         v-if="isNotificationMenuOpen">
-        <ul class="py-1 text-sm text-on_background">
+        <ul v-if="(nList.length > 0)" class="py-1 text-sm text-on_background">
           <a href="#" class="flex items-center justify-center gap-4 py-2 px-4 hover:bg-gray-100 border-b"
             v-for="item in nList">
             <PhFileText class="w-12 h-12" />
@@ -115,6 +115,9 @@ onClickOutside(
             </div>
           </a>
         </ul>
+        <div v-else class="p-5 text-center">
+          <h1 class="text-2xl">No notifications </h1>
+        </div>
       </div>
     </div>
     <!-- Log Out -->

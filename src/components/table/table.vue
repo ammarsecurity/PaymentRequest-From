@@ -370,7 +370,7 @@ const isInfoModalOpen = ref(false);
   </MainModal>
 
   <MainModal styles="w-[40vw] h-[70vh]" text="Order details" v-if="isInfoModalOpen" @close="isInfoModalOpen = false">
-    <div class="grid grid-cols-2 flex-col gap-16" dir="rtl">
+    <div class="grid grid-cols-2 flex-col gap-5" dir="rtl">
       <div class="flex flex-col col-span-2 gap-4" v-if="role !== 'SupUser'">
         <div class="flex flex-col  gap-2" v-if="(role == 'User' && requeststatus != 'Wait')">
           <label class="text-xl text-primary">Note</label>

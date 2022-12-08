@@ -12,8 +12,16 @@ import printJS from 'print-js'
 /* -------------------- Vee Validate -------------------- */
 
 const validationSchemaEdit = ref({
-  requestedAmount: yup.string().required('This field is required'),
+  requestedAmount: yup.number().required('This field is required'),
   amountCurrency: yup.string().required('This field is required'),
+  invoiceDate: yup.string().required('This field is required'),
+  dueDate: yup.string().required('This field is required'),
+});
+const validationSchema = ref({
+  requestedAmount: yup.number().required('This field is required'),
+  amountCurrency: yup.string().required('This field is required'),
+  invoiceDate: yup.string().required('This field is required'),
+  dueDate: yup.string().required('This field is required'),
   purposeOfPaymentAndDetails: yup.string().required('This field is required'),
 });
 /* ------------------------ Axios ----------------------- */
@@ -356,9 +364,9 @@ const showRequestInfo = (index, status, id, isFinished) => {
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Amount</label>
 
-        <input @keypress="inWords($event)" class="border  border-on_background_variant rounded-full px-4 py-2
+        <Field @keypress="inWords($event)" class="border  border-on_background_variant rounded-full px-4 py-2
           focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]" name="requestedAmount"
-          v-model="createRequestForm.requestedAmount" type="text">
+          min="0" v-model="createRequestForm.requestedAmount" type="number" />
         <span class="text-red-500">{{ nWords }}</span>
         <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
       </div>
@@ -473,7 +481,7 @@ const showRequestInfo = (index, status, id, isFinished) => {
         <label class="text-xl text-primary">Amount</label>
         <Field class="border  border-on_background_variant rounded-full px-4 py-2
           focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]" name="requestedAmount"
-          v-model="editRequest.requestedAmount" type="number">
+          min="0" v-model="editRequest.requestedAmount" type="number">
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
       </div>
@@ -581,7 +589,7 @@ const showRequestInfo = (index, status, id, isFinished) => {
   </MainModal>
 
   <MainModal styles="w-[40vw] h-[70vh]" text="Order details" v-if="isInfoModalOpen" @close="isInfoModalOpen = false">
-    <div class="grid grid-cols-2 flex-col gap-16">
+    <div class="grid grid-cols-2 flex-col gap-5">
       <div class="flex flex-col col-span-2 gap-4" v-if="RequestisFinished != true">
         <div class="flex flex-col gap-2" v-if="(role != 'SupUser' && role != 'User')">
           <label class="text-xl text-primary">Note</label>
@@ -607,46 +615,55 @@ const showRequestInfo = (index, status, id, isFinished) => {
         </div>
       </div>
 
-      <div class="flex flex-col gap-2 text-red-600">
-        <label class="text-xl text-primary text-red-600">Note</label>
+      <div class="flex flex-col gap-2 text-red-600 bg-white border roundedshadow-sm  p-3 ">
+        <label class="text-xl text-primary text-red-600 ">Note</label>
+        <hr>
         <p class="text-xl text-primary text-red-600">
           {{ requestInfo.lastInfo }}
         </p>
       </div>
 
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3">
         <label class="text-xl text-primary">Purpose of payment and details</label>
+        <hr>
         <p>{{ requestInfo.purposeOfPaymentAndDetails }}</p>
       </div>
 
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3">
         <label class="text-xl text-primary">Other details</label>
+        <hr>
         <p>{{ requestInfo.otherInfo }}</p>
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3">
         <label class="text-xl text-primary">Payment method </label>
+        <hr>
         <p>{{ requestInfo.paymentMethod }}</p>
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3">
         <label class="text-xl text-primary">Due date</label>
+        <hr>
         <p>{{ dayjs(requestInfo.dueDate).format('ddd, DD MMM YYYY') }} </p>
 
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3">
         <label class="text-xl text-primary">Invoice Date</label>
+        <hr>
         <p>{{ dayjs(requestInfo.invoiceDate).format('ddd, DD MMM YYYY') }} </p>
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3">
         <label class="text-xl text-primary">Beneficary Name</label>
+        <hr>
         <p>{{ requestInfo.beneficaryName }}</p>
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3 ">
         <label class="text-xl text-primary">Payment Budget</label>
+        <hr>
         <p v-if="requestInfo.paymentBudget == false">لا</p>
         <p v-else>yas</p>
       </div>
-      <div class="flex flex-col gap-2" v-if="requestInfo.paymentBudget == false">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3" v-if="requestInfo.paymentBudget == false">
         <label class="text-xl text-primary">Reason</label>
+        <hr>
         <p>{{ requestInfo.paymentBudgetIfFalseJustification }}</p>
       </div>
     </div>

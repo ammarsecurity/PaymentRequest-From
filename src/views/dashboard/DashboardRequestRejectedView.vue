@@ -558,7 +558,7 @@ const isInfoModalOpen = ref(false);
   </MainModal>
 
   <MainModal styles="w-[40vw] h-[70vh]" text="Order details" v-if="isInfoModalOpen" @close="isInfoModalOpen = false">
-    <div class="grid grid-cols-2 flex-col gap-16" dir="rtl">
+    <div class="grid grid-cols-2 flex-col gap-5">
       <div class="flex flex-col col-span-2 gap-4" v-if="RequestisFinished != true">
         <div class="flex flex-col gap-2" v-if="role != 'SupUser' && role != 'User'">
           <label class="text-xl text-primary">Note</label>
@@ -582,47 +582,56 @@ const isInfoModalOpen = ref(false);
         </div>
       </div>
 
-      <div class="flex flex-col gap-2 text-red-600">
+      <div class="flex flex-col gap-2 text-red-600  bg-white border roundedshadow-sm  p-3 ">
         <label class="text-xl text-primary text-red-600">Note</label>
+        <hr>
         <p class="text-xl text-primary text-red-600">
           {{ requestInfo.lastInfo }}
         </p>
       </div>
 
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3 ">
         <label class="text-xl text-primary">Purpose of payment and details</label>
+        <hr>
         <p>{{ requestInfo.purposeOfPaymentAndDetails }}</p>
       </div>
 
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3 ">
         <label class="text-xl text-primary">Other details</label>
+        <hr>
         <p>{{ requestInfo.otherInfo }}</p>
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3 ">
         <label class="text-xl text-primary">Payment method </label>
+        <hr>
         <p>{{ requestInfo.paymentMethod }}</p>
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3 ">
         <label class="text-xl text-primary">Due date
         </label>
+        <hr>
         <p>{{ dayjs(requestInfo.dueDate).format('ddd, DD MMM YYYY') }} </p>
 
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3 ">
         <label class="text-xl text-primary">Invoice Date</label>
+        <hr>
         <p>{{ dayjs(requestInfo.invoiceDate).format('ddd, DD MMM YYYY') }} </p>
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3 ">
         <label class="text-xl text-primary">Beneficary Name</label>
+        <hr>
         <p>{{ requestInfo.beneficaryName }}</p>
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3 ">
         <label class="text-xl text-primary">Payment Budget</label>
+        <hr>
         <p v-if="requestInfo.paymentBudget == false">لا</p>
         <p v-else>yas</p>
       </div>
-      <div class="flex flex-col gap-2" v-if="requestInfo.paymentBudget == false">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3 " v-if="requestInfo.paymentBudget == false">
         <label class="text-xl text-primary">Reason</label>
+        <hr>
         <p>{{ requestInfo.paymentBudgetIfFalseJustification }}</p>
       </div>
     </div>
