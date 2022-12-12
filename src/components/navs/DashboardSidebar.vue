@@ -22,26 +22,34 @@ const role = localStorage.getItem('role');
 
         <RouterLink class="sidebar-item" to="/dashboard/request">
           <PhFileText class="sidebar-item-icon" />
-          Orders
+          Request
         </RouterLink>
-        <RouterLink class="sidebar-item" to="/dashboard/supusersrequest" v-if="(role == 'User')">
+        <RouterLink class="sidebar-item" to="/dashboard/supusersrequest" v-if="(role == 'HOD' || role == 'HOP')">
           <PhFileText class="sidebar-item-icon" />
-          Employee Orders
+          Employee Request
         </RouterLink>
 
-        <RouterLink class="sidebar-item" to="/dashboard/requestfinished" v-if="(role == 'CFO' || role == 'Accounter')">
+        <RouterLink class="sidebar-item" to="/dashboard/requestfinished"
+          v-if="(role == 'CFO' || role == 'Accounter' || role == 'BDM')">
           <PhFileText class="sidebar-item-icon" />
-          Completed Orders
+          Completed Request
         </RouterLink>
-        <RouterLink class="sidebar-item" to="/dashboard/requestrejected" v-if="(role == 'CFO' || role == 'Accounter')">
+        <RouterLink class="sidebar-item" to="/dashboard/requestrejected"
+          v-if="(role == 'CFO' || role == 'Accounter' || role == 'BDM')">
           <PhFileText class="sidebar-item-icon" />
-          Rejected Orders
+          Rejected Request
         </RouterLink>
-        <RouterLink class="sidebar-item" to="/dashboard/requestreports" v-if="(role == 'CFO' || role == 'Accounter')">
+        <RouterLink class="sidebar-item" to="/dashboard/requestreports"
+          v-if="(role == 'CFO' || role == 'Accounter' || role == 'BDM')">
           <PhFileText class="sidebar-item-icon" />
           Reports
         </RouterLink>
-        <RouterLink class="sidebar-item" to="/dashboard/users" v-if="(role == 'User' || role == 'Accounter')">
+        <RouterLink class="sidebar-item" to="/dashboard/compnies" v-if="(role == 'Accounter')">
+          <PhUser class="sidebar-item-icon" />
+          Companies
+        </RouterLink>
+        <RouterLink class="sidebar-item" to="/dashboard/users"
+          v-if="(role == 'HOD' || role == 'HOP' || role == 'Accounter')">
           <PhUser class="sidebar-item-icon" />
           Users
         </RouterLink>

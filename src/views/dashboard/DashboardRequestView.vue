@@ -63,7 +63,9 @@ const createRequestForm = ref({
   invoiceNumber: '',
   invoiceDate: '',
   dueDate: '',
-  BeneficaryName: '',
+  beneficaryName: '',
+  companyId: '00000000-0000-0000-0000-000000000000',
+  requestLoction: ''
 });
 
 const searchform = ref({
@@ -73,14 +75,11 @@ const searchform = ref({
   fullName: '',
   date: '',
 });
+
 const search = async (value) => {
   getRequest();
   pageNumber.value = 1;
 };
-
-
-
-
 
 var showAddOrder = false;
 var isUser = false;
@@ -88,7 +87,7 @@ const role = localStorage.getItem('role');
 if (role == 'Accounter') {
   showAddOrder = false;
   isUser = false;
-} else if (role == 'User') {
+} else if (role == 'HOP' || role == 'HOD') {
   showAddOrder = true;
   isUser = true;
 } else if (role == 'SupUser') {
@@ -127,7 +126,11 @@ const submit = async (value) => {
           invoiceNumber: '',
           invoiceDate: '',
           dueDate: '',
+          companyId: '',
+          requestLoction: ''
         };
+
+      nWords.value == "";
       getRequest();
     })
     .catch((error) => {
@@ -155,6 +158,20 @@ const isNumber = async (value) => {
     return true;
   }
 };
+
+const companies = ref([]);
+const getCompany = () => {
+  isLoading.value = true;
+  axiosInstance
+    .get(`Main/GetCompanies`)
+    .then(({ data }) => {
+      companies.value = data.data;
+      isLoading.value = false;
+    })
+    .catch((error) => { });
+};
+
+getCompany();
 
 
 
@@ -294,7 +311,9 @@ const editRequest = ref({
   invoiceNumber: '',
   invoiceDate: '',
   dueDate: '',
-  BeneficaryName: '',
+  beneficaryName: '',
+  companyId: '',
+  requestLoction: ''
 });
 
 
@@ -314,8 +333,10 @@ const editRequestInfo = (index) => {
   editRequest.value.paymentBudget = info.paymentBudget;
   editRequest.value.paymentBudgetIfFalseJustification = info.paymentBudgetIfFalseJustification;
   editRequest.value.invoiceDate = info.invoiceDate.toString().split('T')[0];
-  editRequest.value.BeneficaryName = info.beneficaryName;
+  editRequest.value.beneficaryName = info.beneficaryName;
   editRequest.value.id = info.id;
+  editRequest.value.companyId = info.companyId;
+  editRequest.value.requestLoction = info.requestLoction
 };
 
 const requestInfo = ref({
@@ -327,6 +348,7 @@ const requestInfo = ref({
   dueDate: '',
   paymentBudget: '',
   requestLoction: '',
+  companyId: '',
 });
 
 const RequestisFinished = ref('');
@@ -345,6 +367,7 @@ const showRequestInfo = (index, status, id, isFinished) => {
     (requestInfo.value.paymentBudgetIfFalseJustification = info.paymentBudgetIfFalseJustification),
     (requestInfo.value.lastInfo = info.lastInfo),
     (requestInfo.value.paymentMethod = info.paymentMethod);
+  (requestInfo.value.companyId = info.companyId);
 }
 
 
@@ -359,7 +382,7 @@ const showRequestInfo = (index, status, id, isFinished) => {
   <!-- Modals -->
   <!-- Add Modal -->
   <MainModal styles="max-w-max" text="Add a new request" v-if="isAddModalOpen" @close="isAddModalOpen = false">
-    <Form class="gap-4" :validationSchema="validationSchema" @submit="submit">
+    <Form class="gap-4 grid grid-cols-2" :validationSchema="validationSchema" @submit="submit">
       <!-- Title -->
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Amount</label>
@@ -379,9 +402,14 @@ const showRequestInfo = (index, status, id, isFinished) => {
           <option value="IQD">IQD</option>
           <option value="USD">USD</option>
           <option value="ERUO">EURO</option>
+          <option value="CHF">CHF</option>
+          <option value="GBP">GBP</option>
+          <option value="DHS">DHS</option>
+          <option value="JD">JD</option>
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="amountCurrency" component="div"></ErrorMessage>
       </div>
+
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Payment method</label>
         <Field
@@ -406,7 +434,7 @@ const showRequestInfo = (index, status, id, isFinished) => {
         <ErrorMessage class="text-red-600 text-lg" name="paymentBudget" component="div"></ErrorMessage>
       </div>
       <div class="flex flex-col gap-2" v-if="!paymentBudgetReason">
-        <label class="text-xl text-red-600">Reason</label>
+        <label class="text-xl text-red-500">Please Provide Reasonable justification</label>
         <Field
           class="border border-red-600 rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="paymentBudgetIfFalseJustification" v-model="createRequestForm.paymentBudgetIfFalseJustification"
@@ -447,7 +475,7 @@ const showRequestInfo = (index, status, id, isFinished) => {
         <label class="text-xl text-primary">Beneficary Name</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="BeneficaryName" v-model="createRequestForm.BeneficaryName" type="text">
+          name="BeneficaryName" v-model="createRequestForm.beneficaryName" type="text">
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="BeneficaryName" component="div"></ErrorMessage>
       </div>
@@ -462,19 +490,46 @@ const showRequestInfo = (index, status, id, isFinished) => {
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">Other details</label>
+        <label class="text-xl text-primary">Request details</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="otherInfo" v-model="createRequestForm.otherInfo" type="text">
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="otherInfo" component="div"></ErrorMessage>
       </div>
+      <div class="flex flex-col gap-2" v-if="role == 'HOP' || role == 'HOD'">
+        <label class="text-xl text-primary">Company</label>
+        <Field
+          class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
+          name="companies" v-model="createRequestForm.companyId" type="select" as="select">
+          <option v-for="item in companies" :value="item.id">
+            {{ item.companyName }}
+          </option>
+        </Field>
+        <ErrorMessage class="text-red-600 text-lg" name="companies" component="div"></ErrorMessage>
+
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="text-xl text-primary">To</label>
+        <Field
+          class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
+          name="requestLoction" v-model="createRequestForm.requestLoction" type="select" as="select">
+          <option :value=1>
+            Accounter
+          </option>
+          <option :value=7>
+            Business department manager (BDM)
+          </option>
+        </Field>
+        <ErrorMessage class="text-red-600 text-lg" name="requestLoction" component="div"></ErrorMessage>
+      </div>
       <MainButton class="col-span-2 mt-5" text="Add" type="submit" />
     </Form>
   </MainModal>
 
   <!-- Edit Modal -->
-  <MainModal text="Update Order" v-if="isEditModalOpen" @close="isEditModalOpen = false">
+  <MainModal text="Update Request" v-if="isEditModalOpen" @close="isEditModalOpen = false">
     <Form class="gap-4" :validationSchema="validationSchemaEdit" @submit="editSubmit">
       <!-- Photo -->
       <div class="flex flex-col gap-2">
@@ -494,6 +549,10 @@ const showRequestInfo = (index, status, id, isFinished) => {
           <option value="IQD">IQD</option>
           <option value="USD">USD</option>
           <option value="ERUO">EURO</option>
+          <option value="CHF">CHF</option>
+          <option value="GBP">GBP</option>
+          <option value="DHS">DHS</option>
+          <option value="JD">JD</option>
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="amountCurrency" component="div"></ErrorMessage>
       </div>
@@ -521,7 +580,7 @@ const showRequestInfo = (index, status, id, isFinished) => {
         <ErrorMessage class="text-red-600 text-lg" name="paymentBudget" component="div"></ErrorMessage>
       </div>
       <div class="flex flex-col gap-2" v-if="editRequest.paymentBudget == false">
-        <label class="text-xl text-primary">Reason</label>
+        <label class="text-xl text-primary">Please Provide Reasonable justification</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="paymentBudgetIfFalseJustification" v-model="editRequest.paymentBudgetIfFalseJustification" type="text">
@@ -561,7 +620,7 @@ const showRequestInfo = (index, status, id, isFinished) => {
         <label class="text-xl text-primary">Beneficary Name</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="BeneficaryName" v-model="editRequest.BeneficaryName" type="text">
+          name="BeneficaryName" v-model="editRequest.beneficaryName" type="text">
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="BeneficaryName" component="div"></ErrorMessage>
       </div>
@@ -583,15 +642,41 @@ const showRequestInfo = (index, status, id, isFinished) => {
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="otherInfo" component="div"></ErrorMessage>
       </div>
+      <div class="flex flex-col gap-2" v-if="role == 'HOP' || role == 'HOD'">
+        <label class="text-xl text-primary">Company</label>
+        <Field
+          class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
+          name="companies" v-model="editRequest.companyId" type="select" as="select">
+          <option v-for="item in companies" :value="item.id">
+            {{ item.companyName }}
+          </option>
+        </Field>
+        <ErrorMessage class="text-red-600 text-lg" name="companies" component="div"></ErrorMessage>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="text-xl text-primary">To</label>
+        <Field
+          class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
+          name="requestLoction" v-model="editRequest.requestLoction" type="select" as="select">
+          <option :value=1>
+            Accounter
+          </option>
+          <option :value=7>
+            Business department manager (BDM)
+          </option>
+        </Field>
+        <ErrorMessage class="text-red-600 text-lg" name="requestLoction" component="div"></ErrorMessage>
+      </div>
 
       <MainButton class="col-span-2 mt-5" text="Add" type="submit" />
     </Form>
   </MainModal>
 
-  <MainModal styles="w-[40vw] h-[70vh]" text="Order details" v-if="isInfoModalOpen" @close="isInfoModalOpen = false">
+  <MainModal styles="w-[40vw] h-[70vh]" text="Request details" v-if="isInfoModalOpen" @close="isInfoModalOpen = false">
     <div class="grid grid-cols-2 flex-col gap-5">
       <div class="flex flex-col col-span-2 gap-4" v-if="RequestisFinished != true">
-        <div class="flex flex-col gap-2" v-if="(role != 'SupUser' && role != 'User')">
+        <div class="flex flex-col gap-2" v-if="(role != 'SupUser' && role != 'HOP' && role != 'HOD')">
           <label class="text-xl text-primary">Note</label>
           <Field
             class="border border-on_background_variant bg-background rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300"
@@ -607,9 +692,14 @@ const showRequestInfo = (index, status, id, isFinished) => {
           <MainButton v-if="role == 'CFO'" @click="editStatusRequest('ApprovalFromCFO')"
             class="bg-green-600 border-none" text="Approval"></MainButton>
 
+          <MainButton v-if="role == 'BDM'" @click="editStatusRequest('Wait')" class="bg-green-600 border-none"
+            text="Approval"></MainButton>
+
           <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForEdit')"
             class="bg-orange-600 border-none" text="Return for modification"></MainButton>
-          <MainButton class="bg-red-600 border-none" v-if="((role != 'User') && (role == 'CFO' || role == 'Accounter'))"
+
+          <MainButton class="bg-red-600 border-none"
+            v-if="((role != 'HOP' || 'HOD') && (role == 'CFO' || role == 'Accounter' || role == 'BDM'))"
             @click="editStatusRequest('Reject')" text="Reject"></MainButton>
 
         </div>
@@ -630,7 +720,7 @@ const showRequestInfo = (index, status, id, isFinished) => {
       </div>
 
       <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3">
-        <label class="text-xl text-primary">Other details</label>
+        <label class="text-xl text-primary">Request details</label>
         <hr>
         <p>{{ requestInfo.otherInfo }}</p>
       </div>
@@ -662,7 +752,7 @@ const showRequestInfo = (index, status, id, isFinished) => {
         <p v-else>yas</p>
       </div>
       <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3" v-if="requestInfo.paymentBudget == false">
-        <label class="text-xl text-primary">Reason</label>
+        <label class="text-xl text-primary">Please Provide Reasonable justification</label>
         <hr>
         <p>{{ requestInfo.paymentBudgetIfFalseJustification }}</p>
       </div>
@@ -693,7 +783,7 @@ const showRequestInfo = (index, status, id, isFinished) => {
               <ErrorMessage class="text-red-600 text-lg" name="Password" component="div"></ErrorMessage>
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-primary">Order Number</label>
+              <label class="text-primary">Request Number</label>
               <Field
                 class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
                 name="Password" v-model="searchform.requestNumber" type="text">
@@ -714,11 +804,11 @@ const showRequestInfo = (index, status, id, isFinished) => {
                 class="border border-on_background_variant bg-background rounded-full focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
                 name="status" v-model="searchform.status" type="select" as="select">
                 <option value="">All</option>
-                <option value="Wait">Waiting Accountant</option>
-                <option value="WaitForCompanyManger">Waiting Company Manager</option>
+                <option value="Wait">Pending at Finance</option>
+                <option value="WaitForCompanyManger">Pending at Company Manager</option>
                 <option value="Reject">Rejected</option>
                 <option value="WaitForEdit">Waiting Update</option>
-                <option value="WaitForCFO">Awaiting CFO approval</option>
+                <option value="WaitForCFO">Pending at CFO</option>
                 <option value="Finished">Completed</option>
               </Field>
               <ErrorMessage class="text-red-600 text-lg" name="status" component="div"></ErrorMessage>
@@ -728,7 +818,8 @@ const showRequestInfo = (index, status, id, isFinished) => {
             </div>
           </div>
 
-          <MainButton class="h-12 mt-4 xl:mt-0" v-if="showAddOrder" @click="isAddModalOpen = true" text="Add new order">
+          <MainButton class="h-12 mt-4 xl:mt-0" v-if="showAddOrder" @click="isAddModalOpen = true"
+            text="Add new request">
           </MainButton>
         </div>
         <!-- Table -->
@@ -740,9 +831,9 @@ const showRequestInfo = (index, status, id, isFinished) => {
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
                   #
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <!-- <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
                   Picture or logo
-                </th>
+                </th> -->
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
                   Full Name
                 </th>
@@ -752,12 +843,11 @@ const showRequestInfo = (index, status, id, isFinished) => {
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
                   Amount
                 </th>
-
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
                   Invoice Number
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
-                  Order Number
+                  Request Number
                 </th>
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
                   Status
@@ -775,9 +865,9 @@ const showRequestInfo = (index, status, id, isFinished) => {
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold text-primary">
                   {{ index + 1 + paginationIndex }}
                 </td>
-                <th scope="row" class="whitespace-nowrap ">
+                <!-- <th scope="row" class="whitespace-nowrap ">
                   <img class="h-16 w-16 object-cover rounded-[50px] my-1" :src="item.companyLogo" alt="" />
-                </th>
+                </th> -->
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold">
                   {{ item.fullName }}
                 </td>
@@ -800,10 +890,10 @@ const showRequestInfo = (index, status, id, isFinished) => {
                   {{ item.requestNumber }}
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'Wait'">
-                  Waiting Accounts
+                  Pending at Finance
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForCompanyManger'">
-                  Waiting Company Manager
+                  Pending at Company Manager
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'Reject'">
                   Rejected
@@ -818,7 +908,10 @@ const showRequestInfo = (index, status, id, isFinished) => {
                   Completed
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForCFO'">
-                  Awaiting CFO approval
+                  Pending at CFO
+                </td>
+                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForBDM'">
+                  Pending at BDM
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4">
                   {{ dayjs(item.requestDate).format('ddd, DD MMM YYYY') }}

@@ -16,6 +16,7 @@ import DashboardHome from '@/views/dashboard/DashboardHome.vue';
 import DashboardRequestReportsView from '@/views/dashboard/DashboardRequestReportsView.vue';
 import DashboardRequestFinishedView from '@/views/dashboard/DashboardRequestFinishedView.vue';
 import DashboardRequestRejectedView from '@/views/dashboard/DashboardRequestRejectedView.vue';
+import DashboardCompniesView from '@/views/dashboard/DashboardCompniesView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -71,6 +72,11 @@ const router = createRouter({
       path: '/dashboard/supusersrequest',
       name: 'dashboard-supusersrequest',
       component: DashboardSubUserRequestView,
+    },
+    {
+      path: '/dashboard/compnies',
+      name: 'dashboard-compnies',
+      component: DashboardCompniesView,
     },
 
     {

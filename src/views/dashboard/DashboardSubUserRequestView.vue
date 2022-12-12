@@ -75,7 +75,6 @@ if (role == 'Accounter') {
 const submit = async (value) => {
   isLoading.value = true;
   isError.value = false;
-
   axiosInstance
     .post('Main/AddRequset', createRequestForm.value)
     .then(({ data }) => {
@@ -366,7 +365,7 @@ const isInfoModalOpen = ref(false);
         <ErrorMessage class="text-red-600 text-lg" name="paymentBudget" component="div"></ErrorMessage>
       </div>
       <div class="flex flex-col gap-2" v-if="!paymentBudgetReason">
-        <label class="text-xl text-primary">Reason</label>
+        <label class="text-xl text-primary">Please Provide Reasonable justification</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="paymentBudgetIfFalseJustification" v-model="createRequestForm.paymentBudgetIfFalseJustification"
@@ -481,7 +480,7 @@ const isInfoModalOpen = ref(false);
         <ErrorMessage class="text-red-600 text-lg" name="paymentBudget" component="div"></ErrorMessage>
       </div>
       <div class="flex flex-col gap-2" v-if="editRequest.paymentBudget == false">
-        <label class="text-xl text-primary">Reason</label>
+        <label class="text-xl text-primary">Please Provide Reasonable justification</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="paymentBudgetIfFalseJustification" v-model="editRequest.paymentBudgetIfFalseJustification" type="text">
@@ -550,8 +549,8 @@ const isInfoModalOpen = ref(false);
 
   <MainModal styles="w-[40vw] h-[70vh]" text="Order details" v-if="isInfoModalOpen" @close="isInfoModalOpen = false">
     <div class="grid grid-cols-2 flex-col gap-5 ">
-      <div class="flex flex-col col-span-2 gap-4" v-if="requeststatus == 'WaitForCompanyManger'">
-        <div class="flex flex-col gap-2">
+      <div class="flex flex-col col-span-2 gap-4" v-if="RequestisFinished != true">
+        <div class="flex flex-col gap-2" v-if="(role == 'HOP' || role == 'HOD')">
           <label class="text-xl text-primary">Note</label>
           <Field
             class="border border-on_background_variant bg-background rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300"
@@ -561,10 +560,23 @@ const isInfoModalOpen = ref(false);
         </div>
         <div class="flex gap-4 w-full col-span-2">
 
-          <MainButton v-if="role == 'User'" @click="editStatusRequest('Wait')" class="bg-green-600 border-none"
+          <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForCFO')"
+            class="bg-green-600 border-none" text="Approval"></MainButton>
+
+          <MainButton v-if="role == 'CFO'" @click="editStatusRequest('ApprovalFromCFO')"
+            class="bg-green-600 border-none" text="Approval"></MainButton>
+
+          <MainButton v-if="role == 'BDM'" @click="editStatusRequest('Wait')" class="bg-green-600 border-none"
             text="Approval"></MainButton>
 
-          <MainButton class="bg-red-600 border-none" v-if="role == 'User'" @click="editStatusRequest('Reject')"
+          <MainButton v-if="(role == 'HOP' || role == 'HOD')" @click="editStatusRequest('Wait')"
+            class="bg-green-600 border-none" text="Approval">
+          </MainButton>
+
+          <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForEdit')"
+            class="bg-orange-600 border-none" text="Return for modification"></MainButton>
+
+          <MainButton class="bg-red-600 border-none" v-if="(role != 'SupUser')" @click="editStatusRequest('Reject')"
             text="Reject"></MainButton>
 
         </div>
@@ -617,7 +629,7 @@ const isInfoModalOpen = ref(false);
         <p v-else>yas</p>
       </div>
       <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3" v-if="requestInfo.paymentBudget == false">
-        <label class="text-xl text-primary">Reason</label>
+        <label class="text-xl text-primary">Please Provide Reasonable justification</label>
         <hr>
         <p>{{ requestInfo.paymentBudgetIfFalseJustification }}</p>
       </div>
@@ -669,11 +681,11 @@ const isInfoModalOpen = ref(false);
                 class="border border-on_background_variant bg-background rounded-full focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
                 name="status" v-model="searchform.status" type="select" as="select">
                 <option value="">All</option>
-                <option value="Wait">Waiting Accountant</option>
-                <option value="WaitForCompanyManger">Waiting Company Manager</option>
+                <option value="Wait">Pending at Finance</option>
+                <option value="WaitForCompanyManger">Pending at Company Manager</option>
                 <option value="Reject">Rejected</option>
                 <option value="WaitForEdit">Waiting Update</option>
-                <option value="WaitForCFO">Awaiting CFO approval</option>
+                <option value="WaitForCFO">Pending at CFO</option>
                 <option value="Finished">Completed</option>
               </Field>
               <ErrorMessage class="text-red-600 text-lg" name="status" component="div"></ErrorMessage>
@@ -684,7 +696,7 @@ const isInfoModalOpen = ref(false);
           </div>
 
           <!-- <MainButton class="h-12 mt-4 xl:mt-0" v-if="showAddOrder" @click="isAddModalOpen = true"
-            text="Add new order">
+            text="Add new request">
           </MainButton> -->
         </div>
         <!-- Table -->
@@ -696,9 +708,9 @@ const isInfoModalOpen = ref(false);
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
                   #
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <!-- <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
                   Picture or logo
-                </th>
+                </th> -->
                 <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
                   Full Name
                 </th>
@@ -732,9 +744,9 @@ const isInfoModalOpen = ref(false);
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold text-primary">
                   {{ index + 1 + paginationIndex }}
                 </td>
-                <th scope="row" class="whitespace-nowrap">
+                <!-- <th scope="row" class="whitespace-nowrap">
                   <img class="h-16 w-16 object-cover rounded-[50px] my-1" :src="item.companyLogo" alt="" />
-                </th>
+                </th> -->
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold">
                   {{ item.fullName }}
                 </td>
@@ -757,10 +769,10 @@ const isInfoModalOpen = ref(false);
                   {{ item.requestNumber }}
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'Wait'">
-                  Waiting Accounts
+                  Pending at Finance
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForCompanyManger'">
-                  Waiting Company Manager
+                  Pending at Company Manager
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'Reject'">
                   Rejected
@@ -775,7 +787,10 @@ const isInfoModalOpen = ref(false);
                   Completed
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForCFO'">
-                  Awaiting CFO approval
+                  Pending at CFO
+                </td>
+                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForBDM'">
+                  Pending at BDM
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4">
                   {{ dayjs(item.requestDate).format('ddd, DD MMM YYYY') }}

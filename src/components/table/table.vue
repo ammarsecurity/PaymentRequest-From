@@ -427,7 +427,7 @@ const isInfoModalOpen = ref(false);
         <p v-if="(requestInfo.paymentBudget == false)">لا</p>
       </div>
       <div class="flex flex-col gap-2" v-if="(requestInfo.paymentBudget == false)">
-        <label class="text-xl text-primary">Reason</label>
+        <label class="text-xl text-primary">Please Provide Reasonable justification</label>
         <p>{{ requestInfo.paymentBudgetIfFalseJustification }}</p>
       </div>
 
@@ -440,7 +440,7 @@ const isInfoModalOpen = ref(false);
     <div class="flex flex-col w-full">
       <DashboardNavBar path="Pending Orders" />
       <div class="flex flex-col px-4 xl:px-8 mt-32 xl:mt-8 gap-4">
-        <MainButton v-if="showAddOrder" @click="isAddModalOpen = true" text="Add new order">
+        <MainButton v-if="showAddOrder" @click="isAddModalOpen = true" text="Add new request">
         </MainButton>
 
         <!-- Table -->
@@ -503,10 +503,10 @@ const isInfoModalOpen = ref(false);
                   {{ item.invoiceNumber }}
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'Wait'">
-                  Waiting Accounts
+                  Pending at Finance
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForCompanyManger'">
-                  Waiting Company Manager
+                  Pending at Company Manager
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'Reject'">
                   Rejected
@@ -521,7 +521,10 @@ const isInfoModalOpen = ref(false);
                   Completed
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForCFO'">
-                  Awaiting CFO approval
+                  Pending at CFO
+                </td>
+                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForBDM'">
+                  Pending at BDM
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4">
                   {{ dayjs(item.requestDate).format('ddd, DD MMM YYYY') }}

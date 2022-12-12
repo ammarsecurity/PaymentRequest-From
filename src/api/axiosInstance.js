@@ -2,8 +2,8 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import i18n from '@/locales/i18n';
-//const baseURL = 'https://localhost:7219/api/';
-const baseURL = 'https://accounter-api.lab-logic.com/api/';
+const baseURL = 'https://localhost:7219/api/';
+//const baseURL = 'https://accounter-api.lab-logic.com/api/';
 // Axios
 const axiosInstance = axios.create();
 axiosInstance.interceptors.response.use(

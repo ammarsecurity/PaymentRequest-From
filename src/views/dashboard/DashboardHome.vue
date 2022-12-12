@@ -92,13 +92,68 @@ const chartData1 = reactive({
   }
 })
 
+const chartData2 = reactive({
+  series: [{
+    name: 'PRODUCT A',
+    data: [44, 55, 41, 67, 22, 43]
+  }, {
+    name: 'PRODUCT B',
+    data: [13, 23, 20, 8, 13, 27]
+  }, {
+    name: 'PRODUCT C',
+    data: [11, 17, 15, 15, 21, 14]
+  }, {
+    name: 'PRODUCT D',
+    data: [21, 7, 25, 13, 22, 8]
+  }],
+  chartOptions: {
+    chart: {
+      type: 'bar',
+      height: 350,
+    },
+    responsive: [{
+      breakpoint: 480,
+      options: {
+        legend: {
+          position: 'bottom',
+          offsetX: -10,
+          offsetY: 0
+        }
+      }
+    }],
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '55%',
+        endingShape: 'rounded'
+      },
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      show: true,
+      width: 2,
+      colors: ['transparent']
+    },
+    xaxis: {
+      categories: [],
+    },
+    fill: {
+      opacity: 1
+    },
+  }
+})
+
+
 const counts = ref({
 
 })
 onMounted(async () => {
   const { data } = await axiosInstance.get("Main/GetReportForCharts?from=2022-12-02T18%3A28%3A32.039Z&to=2022-12-07T18%3A28%3A32.039Z")
   const res2 = await axiosInstance.get("Main/GetCounts")
-  console.log(res2);
+  const { data2 } = await axiosInstance.get("Main/GetReportForChartsForEmployee")
+
   // chart 1
   chartData.chartOptions.labels = data.byStatus.map(e => e.name)
   chartData.series = data.byStatus.map(e => e.count)
@@ -110,6 +165,7 @@ onMounted(async () => {
     }
   ))
   chartData1.chartOptions.xaxis.categories = data.days.map(e => e.date)
+  chartData2.chartOptions.xaxis.categories = data2.days.map(e => e.date)
   counts.value = res2.data
 })
 
@@ -190,7 +246,14 @@ onMounted(async () => {
               :series="chartData1.series">
             </VueApexCharts>
           </div>
-
+          <div>
+            <div class="text-center mb-5 text-3xl">
+              All request status by day
+            </div>
+            <VueApexCharts :key="chartData2.series.length" width="100%" type="bar" :options="chartData2.chartOptions"
+              :series="chartData2.series">
+            </VueApexCharts>
+          </div>
           <!-- <Bar id="my-chart-id" :options="chartOptions" :data="lineChart" /> -->
         </div>
         <!-- <div class="flex flex-col xl:flex-row w-full xl:justify-between xl:items-center">
