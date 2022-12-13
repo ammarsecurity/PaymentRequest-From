@@ -1,177 +1,4 @@
-<script setup>
-// import { Form, Field, ErrorMessage } from 'vee-validate';
-// import * as yup from 'yup';
-// import { axiosInstance } from '@/api/axiosInstance.js';
-import { onMounted, reactive, ref } from 'vue';
-import VueApexCharts from 'vue3-apexcharts';
-import { axiosInstance } from '@/api/axiosInstance';
-import VueJsCounter from 'vue-js-counter';
-
-
-const isLoading = ref(false);
-const lineChart = ref({
-  labels: ['January', 'February', 'March'],
-  datasets: [{ data: [40, 20, 12] }]
-});
-const chartOptions = ref({
-  responsive: true
-});
-
-const chartData = reactive({
-  series: [],
-  chartOptions: {
-    chart: {
-      width: 380,
-      type: 'pie',
-    },
-    labels: [],
-    responsive: [{
-      breakpoint: 480,
-      options: {
-        chart: {
-          width: 200
-        },
-        legend: {
-          position: 'bottom'
-        }
-      }
-    }]
-  },
-})
-
-const chartData1 = reactive({
-  series: [{
-    name: 'PRODUCT A',
-    data: [44, 55, 41, 67, 22, 43]
-  }, {
-    name: 'PRODUCT B',
-    data: [13, 23, 20, 8, 13, 27]
-  }, {
-    name: 'PRODUCT C',
-    data: [11, 17, 15, 15, 21, 14]
-  }, {
-    name: 'PRODUCT D',
-    data: [21, 7, 25, 13, 22, 8]
-  }],
-  chartOptions: {
-    chart: {
-      type: 'bar',
-      height: 350,
-    },
-    responsive: [{
-      breakpoint: 480,
-      options: {
-        legend: {
-          position: 'bottom',
-          offsetX: -10,
-          offsetY: 0
-        }
-      }
-    }],
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: '55%',
-        endingShape: 'rounded'
-      },
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      show: true,
-      width: 2,
-      colors: ['transparent']
-    },
-    xaxis: {
-      categories: [],
-    },
-    fill: {
-      opacity: 1
-    },
-  }
-})
-
-const chartData2 = reactive({
-  series: [{
-    name: 'PRODUCT A',
-    data: [44, 55, 41, 67, 22, 43]
-  }, {
-    name: 'PRODUCT B',
-    data: [13, 23, 20, 8, 13, 27]
-  }, {
-    name: 'PRODUCT C',
-    data: [11, 17, 15, 15, 21, 14]
-  }, {
-    name: 'PRODUCT D',
-    data: [21, 7, 25, 13, 22, 8]
-  }],
-  chartOptions: {
-    chart: {
-      type: 'bar',
-      height: 350,
-    },
-    responsive: [{
-      breakpoint: 480,
-      options: {
-        legend: {
-          position: 'bottom',
-          offsetX: -10,
-          offsetY: 0
-        }
-      }
-    }],
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: '55%',
-        endingShape: 'rounded'
-      },
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      show: true,
-      width: 2,
-      colors: ['transparent']
-    },
-    xaxis: {
-      categories: [],
-    },
-    fill: {
-      opacity: 1
-    },
-  }
-})
-
-
-const counts = ref({
-
-})
-onMounted(async () => {
-  const { data } = await axiosInstance.get("Main/GetReportForCharts?from=2022-12-02T18%3A28%3A32.039Z&to=2022-12-07T18%3A28%3A32.039Z")
-  const res2 = await axiosInstance.get("Main/GetCounts")
-  const { data2 } = await axiosInstance.get("Main/GetReportForChartsForEmployee")
-
-  // chart 1
-  chartData.chartOptions.labels = data.byStatus.map(e => e.name)
-  chartData.series = data.byStatus.map(e => e.count)
-
-  chartData1.series = data.byDate.map(e => (
-    {
-      name: e.name,
-      data: e.days.map(e2 => e2.count)
-    }
-  ))
-  chartData1.chartOptions.xaxis.categories = data.days.map(e => e.date)
-  chartData2.chartOptions.xaxis.categories = data2.days.map(e => e.date)
-  counts.value = res2.data
-})
-
-</script>
 <template>
-
   <MainLoader v-if="isLoading" />
 
   <div class="flex xl:overflow-hidden xl:h-screen relative z-20" v-motion-fade>
@@ -183,13 +10,10 @@ onMounted(async () => {
           class="lg:py-8 py-2 grid lg:grid-cols-4 grid-cols-1 w-full lg:gap-8 gap-4 pb-7 justify-self-end self-end [&>*]:gap-7">
           <!-- Total Courses -->
           <div class="flex flex-col courses p-6 rounded-2xl shadow-xl cursor-pointer">
-            <h2 class="text-white font-bold text-2xl">
-              All
-            </h2>
+            <h2 class="text-white font-bold text-2xl">All</h2>
             <div class="flex mt-6 justify-center items-center mt-auto">
               <PhFiles class="[&>*]:fill-white w-12 h-12" />
               <span class="text-4xl font-bold text-white mr-auto">
-
                 <VueJsCounter v-if="counts?.all !== undefined" :end="counts.all" decimal="," duration="2000" start="0"
                   thousand="."></VueJsCounter>
               </span>
@@ -230,41 +54,202 @@ onMounted(async () => {
           </div>
         </div>
         <div class="grid grid-cols-2 bg-white p-5 border rounded shadow">
-          <div>
-            <div class="text-center mb-5 text-3xl">
-              All request by status
-            </div>
-            <VueApexCharts :key="chartData.series.length" width="100%" type="pie" :options="chartData.chartOptions"
-              :series="chartData.series">
-            </VueApexCharts>
+          <div class="text-center">
+            <div class="text-center mb-5 text-3xl"></div>
+            <div id="main2" style="width:100%; height:400px;background: #fff;margin-top: 9px;    padding: 11px;"></div>
           </div>
           <div>
             <div class="text-center mb-5 text-3xl">
               All request status by day
             </div>
-            <VueApexCharts :key="chartData1.series.length" width="100%" type="bar" :options="chartData1.chartOptions"
-              :series="chartData1.series">
-            </VueApexCharts>
+            <div id="main" style="width:100%; height:400px;background: #fff;margin-top: 9px;    padding: 11px;"></div>
           </div>
+
           <div>
             <div class="text-center mb-5 text-3xl">
               All request status by day
             </div>
-            <VueApexCharts :key="chartData2.series.length" width="100%" type="bar" :options="chartData2.chartOptions"
-              :series="chartData2.series">
-            </VueApexCharts>
           </div>
           <!-- <Bar id="my-chart-id" :options="chartOptions" :data="lineChart" /> -->
         </div>
         <!-- <div class="flex flex-col xl:flex-row w-full xl:justify-between xl:items-center">
           <Pie id="my-chart-id" :data="pieChart" />
         </div> -->
-
-
       </div>
     </div>
   </div>
 </template>
+<script>
+
+import VueApexCharts from 'vue3-apexcharts';
+import { axiosInstance } from '@/api/axiosInstance';
+import VueJsCounter from 'vue-js-counter';
+export default ({
+  name: 'home',
+  data() {
+    return {
+      options: {
+        labels: [],
+        series: [],
+      },
+      counts: {
+        waitforedit: 0,
+        rejacted: 0,
+        complete: 0,
+        all: 0
+      }
+
+    }
+  },
+  mounted() {
+    this.gecount();
+    this.getchartline();
+  },
+  methods: {
+    gecount() {
+      axiosInstance
+        .get('Main/GetCounts')
+        .then(({ data }) => {
+          this.counts = data;
+        })
+        .catch((error) => { });
+    },
+    getchartline() {
+      axiosInstance
+        .get('Main/GetReportForCharts')
+        .then(({ data }) => {
+          var myChart2 = echarts.init(document.getElementById("main2"));
+          var chartDom = document.getElementById('main');
+          var myChart = echarts.init(chartDom);
+
+
+
+          var option = {
+            title: {
+              text: 'All request by status',
+              subtext: '',
+              left: 'center'
+            },
+            tooltip: {
+              trigger: 'item'
+            },
+            legend: {
+              orient: 'vertical',
+              left: 'left'
+            },
+            series: [
+              {
+                with: '100%',
+                name: 'Access From',
+                type: 'pie',
+                radius: '50%',
+                data: data.byStatus,
+                emphasis: {
+                  itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                  }
+                }
+              }
+            ]
+          };
+          myChart2.setOption(option);
+
+          var option2 = {
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                // Use axis to trigger tooltip
+                type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
+              }
+            },
+            legend: {},
+            grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+            },
+            xAxis: {
+              type: 'value'
+            },
+            yAxis: {
+              type: 'category',
+              data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            },
+            series: [
+              {
+                name: 'Direct',
+                type: 'bar',
+                stack: 'total',
+                label: {
+                  show: true
+                },
+                emphasis: {
+                  focus: 'series'
+                },
+                data: [320, 302, 301, 334, 390, 330, 320]
+              },
+              {
+                name: 'Mail Ad',
+                type: 'bar',
+                stack: 'total',
+                label: {
+                  show: true
+                },
+                emphasis: {
+                  focus: 'series'
+                },
+                data: [120, 132, 101, 134, 90, 230, 210]
+              },
+              {
+                name: 'Affiliate Ad',
+                type: 'bar',
+                stack: 'total',
+                label: {
+                  show: true
+                },
+                emphasis: {
+                  focus: 'series'
+                },
+                data: [220, 182, 191, 234, 290, 330, 310]
+              },
+              {
+                name: 'Video Ad',
+                type: 'bar',
+                stack: 'total',
+                label: {
+                  show: true
+                },
+                emphasis: {
+                  focus: 'series'
+                },
+                data: [150, 212, 201, 154, 190, 330, 410]
+              },
+              {
+                name: 'Search Engine',
+                type: 'bar',
+                stack: 'total',
+                label: {
+                  show: true
+                },
+                emphasis: {
+                  focus: 'series'
+                },
+                data: [820, 832, 901, 934, 1290, 1330, 1320]
+              }
+            ]
+          };
+          myChart.setOption(option2);
+        })
+        .catch((error) => { });
+
+    }
+  }
+})
+
+</script>
 <style scoped>
 ::-webkit-scrollbar-thumb {
   background: rgb(182, 182, 182);
