@@ -26,8 +26,58 @@ const validationSchema = ref({
 
 const isError = ref(false);
 const isLoading = ref(false);
+const attachmentList = ref([]);
+const isUploadModalOpen = ref(false);
+const AttachmenmtForm = ref({
+  File: '',
+  RequestId: '',
+});
 
 
+const uploadAttachment = async (value) => {
+  isLoading.value = true;
+  isError.value = false;
+
+  const formData = new FormData();
+  formData.append('File', AttachmenmtForm.value.File);
+
+  axiosInstance
+    .post(
+      'Main/AddAttachment?requestId=' + AttachmenmtForm.value.RequestId,
+      formData
+    )
+    .then(({ data }) => {
+      isLoading.value = false;
+      isInfoModalOpen.value = false;
+      Swal.fire({
+        title: 'Operation accomplished successfully',
+        icon: 'success',
+        showCancelButton: true,
+        showConfirmButton: false,
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Close',
+      }),
+        getRequest();
+    })
+    .catch((error) => {
+      isLoading.value = false;
+      Swal.fire({
+        title: 'Error',
+        text: 'An error occurred while updating the request',
+        icon: 'error',
+        showCancelButton: true,
+        cancelButtonColor: '#213263',
+        cancelButtonText: 'Close',
+      });
+    });
+  return;
+};
+
+const attachmentmodel = (index) => {
+  const info = list.value[index];
+  AttachmenmtForm.value.RequestId = info.id;
+  attachmentList.value = info.attachments;
+};
 // POST
 const createRequestForm = ref({
   requestedAmount: '',
@@ -282,6 +332,7 @@ const requestInfo = ref({
   dueDate: '',
   paymentBudget: '',
   requestLoction: '',
+
 });
 
 
@@ -302,6 +353,7 @@ const showRequestInfo = (index, status, id) => {
       info.paymentBudgetIfFalseJustification),
     (requestInfo.value.lastInfo = info.lastInfo),
     (requestInfo.value.paymentMethod = info.paymentMethod);
+
 };
 
 /* ------------------------ Index ----------------------- */
@@ -310,9 +362,50 @@ const isEditModalOpen = ref(false);
 const isInfoModalOpen = ref(false);
 </script>
 <template>
-  <!-- Post -->
 
-  <!-- Edit -->
+  <MainModal text="Upload Attachment" v-if="isUploadModalOpen" @close="isUploadModalOpen = false">
+    <div class="flex-1 text-center justify-center grid">
+      <Form class="gap-4" @submit="uploadAttachment()">
+        <!-- Photo -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xl text-primary">Attachment File</label>
+          <span>png , jpg , zip , doc , xlsx , xls</span>
+          <Field
+            class="border border-on_background_variant rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
+            name="File" v-model="AttachmenmtForm.File" @change="uploadPhoto('add')" type="file">
+          </Field>
+          <ErrorMessage class="text-red-600 text-lg" name="File" component="div"></ErrorMessage>
+        </div>
+        <MainButton class="mt-5" text="Add" type="submit" />
+      </Form>
+    </div>
+
+    <hr />
+    <div class="grid grid-cols-2">
+      <div v-for="item in attachmentList"
+        class="flex justify-center text-center max-w-sm rounded overflow-hidden shadow-lg mt-7">
+        <img class="w-28" src="../../../public/images/att.png" alt="Sunset in the mountains" />
+        <!-- <div class="px-6 py-4">
+            <div class="font-bold text-xl mb-2">{{ item.attachmentFile }}</div>
+          </div> -->
+        <div class="px-6 pt-4 pb-2">
+          <span class="inline-block bg-orange-400 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2">{{
+              item.insertDate.split('T')[0]
+          }}</span>
+          <span class="inline-block bg-green-500 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2">
+            {{ item.fullName }}
+          </span>
+          <a :href="item.attachmentFile">
+            <span class="inline-block bg-cyan-900 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2">
+              Download
+            </span>
+
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </MainModal>
 
   <MainLoader v-if="isLoading" />
 
@@ -549,8 +642,9 @@ const isInfoModalOpen = ref(false);
 
   <MainModal styles="w-[40vw] h-[70vh]" text="Order details" v-if="isInfoModalOpen" @close="isInfoModalOpen = false">
     <div class="grid grid-cols-2 flex-col gap-5 ">
-      <div class="flex flex-col col-span-2 gap-4" v-if="RequestisFinished != true">
-        <div class="flex flex-col gap-2" v-if="(role == 'HOP' || role == 'HOD')">
+      <div class="flex flex-col col-span-2 gap-4"
+        v-if="((role == 'HOP' || role == 'HOD') && requeststatus == 'WaitForCompanyManger' && RequestisFinished != true)">
+        <div class="flex flex-col gap-2">
           <label class="text-xl text-primary">Note</label>
           <Field
             class="border border-on_background_variant bg-background rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300"
@@ -575,7 +669,7 @@ const isInfoModalOpen = ref(false);
 
           <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForEdit')"
             class="bg-orange-600 border-none" text="Return for modification"></MainButton>
-
+          <!-- || requeststatus != 'WaitForCompanyManger' -->
           <MainButton class="bg-red-600 border-none" v-if="(role != 'SupUser')" @click="editStatusRequest('Reject')"
             text="Reject"></MainButton>
 
@@ -806,6 +900,9 @@ const isInfoModalOpen = ref(false);
                         showRequestInfo(index, item.status, item.id),
                         (isInfoModalOpen = true)
                       " />
+                    <PhFileText @click="
+                      attachmentmodel(index), (isUploadModalOpen = true)
+                    " class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer" />
                   </div>
 
                 </td>

@@ -6,8 +6,7 @@ import { ref } from 'vue';
 import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
 import { computed } from '@vue/reactivity';
-import printJS from 'print-js'
-
+import printJS from 'print-js';
 
 /* -------------------- Vee Validate -------------------- */
 
@@ -27,29 +26,81 @@ const validationSchema = ref({
 /* ------------------------ Axios ----------------------- */
 const isAddModalOpen = ref(false);
 const isEditModalOpen = ref(false);
+const isUploadModalOpen = ref(false);
 const isInfoModalOpen = ref(false);
 const isError = ref(false);
 const isLoading = ref(false);
 
 const nWords = ref('');
 
-var a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
-var b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+var a = [
+  '',
+  'one ',
+  'two ',
+  'three ',
+  'four ',
+  'five ',
+  'six ',
+  'seven ',
+  'eight ',
+  'nine ',
+  'ten ',
+  'eleven ',
+  'twelve ',
+  'thirteen ',
+  'fourteen ',
+  'fifteen ',
+  'sixteen ',
+  'seventeen ',
+  'eighteen ',
+  'nineteen ',
+];
+var b = [
+  '',
+  '',
+  'twenty',
+  'thirty',
+  'forty',
+  'fifty',
+  'sixty',
+  'seventy',
+  'eighty',
+  'ninety',
+];
 
 function inWords(n) {
   var num = n.target.value;
   if ((num = num.toString()).length > 9) return 'overflow';
-  n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-  if (!n) return; var str = '';
-  str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'billion ' : '';
-  str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'million ' : '';
-  str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
-  str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
-  str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'only ' : '';
+  n = ('000000000' + num)
+    .substr(-9)
+    .match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+  if (!n) return;
+  var str = '';
+  str +=
+    n[1] != 0
+      ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'billion '
+      : '';
+  str +=
+    n[2] != 0
+      ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'million '
+      : '';
+  str +=
+    n[3] != 0
+      ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand '
+      : '';
+  str +=
+    n[4] != 0
+      ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred '
+      : '';
+  str +=
+    n[5] != 0
+      ? (str != '' ? 'and ' : '') +
+      (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) +
+      'only '
+      : '';
   nWords.value = str;
   // return str;
 }
-
 
 // POST
 const createRequestForm = ref({
@@ -65,7 +116,11 @@ const createRequestForm = ref({
   dueDate: '',
   beneficaryName: '',
   companyId: '00000000-0000-0000-0000-000000000000',
-  requestLoction: ''
+  requestLoction: '',
+});
+const AttachmenmtForm = ref({
+  File: '',
+  RequestId: '',
 });
 
 const searchform = ref({
@@ -115,7 +170,7 @@ const submit = async (value) => {
         cancelButtonColor: '#d33',
         cancelButtonText: 'Close',
       }),
-        createRequestForm.value = {
+        (createRequestForm.value = {
           requestedAmount: '',
           amountCurrency: '',
           purposeOfPaymentAndDetails: '',
@@ -127,10 +182,10 @@ const submit = async (value) => {
           invoiceDate: '',
           dueDate: '',
           companyId: '',
-          requestLoction: ''
-        };
+          requestLoction: '',
+        });
 
-      nWords.value == "";
+      nWords.value == '';
       getRequest();
     })
     .catch((error) => {
@@ -149,11 +204,11 @@ const submit = async (value) => {
   return;
 };
 const isNumber = async (value) => {
-  alert("gfddfg")
-  evt = (evt) ? evt : window.event;
-  var charCode = (evt.which) ? evt.which : evt.keyCode;
-  if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
-    evt.preventDefault();;
+  alert('gfddfg');
+  evt = evt ? evt : window.event;
+  var charCode = evt.which ? evt.which : evt.keyCode;
+  if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
+    evt.preventDefault();
   } else {
     return true;
   }
@@ -173,21 +228,64 @@ const getCompany = () => {
 
 getCompany();
 
-
-
 const lastInfo = ref('Nothing');
 const requestId = ref('');
 const requeststatus = ref('');
+const attachmentList = ref([]);
 const paymentBudgetReason = computed(() => {
   return createRequestForm.value.paymentBudget;
-})
-
+});
 
 const editStatusRequest = async (value) => {
   isLoading.value = true;
   isError.value = false;
   axiosInstance
-    .post('Main/EditRequset?id=' + requestId.value + '&message=' + lastInfo.value + '&status=' + value)
+    .post(
+      'Main/EditRequset?id=' +
+      requestId.value +
+      '&message=' +
+      lastInfo.value +
+      '&status=' +
+      value
+    )
+    .then(({ data }) => {
+      isLoading.value = false;
+      isInfoModalOpen.value = false;
+      Swal.fire({
+        title: 'Operation accomplished successfully',
+        icon: 'success',
+        showCancelButton: true,
+        showConfirmButton: false,
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Close',
+      }),
+        getRequest();
+    })
+    .catch((error) => {
+      isLoading.value = false;
+      Swal.fire({
+        title: 'Error',
+        text: 'An error occurred while updating the request',
+        icon: 'error',
+        showCancelButton: true,
+        cancelButtonColor: '#213263',
+        cancelButtonText: 'Close',
+      });
+    });
+  return;
+};
+const uploadAttachment = async (value) => {
+  isLoading.value = true;
+  isError.value = false;
+
+  const formData = new FormData();
+  formData.append('File', AttachmenmtForm.value.File);
+
+  axiosInstance
+    .post(
+      'Main/AddAttachment?requestId=' + AttachmenmtForm.value.RequestId,
+      formData
+    )
     .then(({ data }) => {
       isLoading.value = false;
       isInfoModalOpen.value = false;
@@ -216,9 +314,13 @@ const editStatusRequest = async (value) => {
 };
 
 const print = async (id) => {
-
-  printJS({ printable: `${baseURL}Main/GetReport?id=${id}`, type: 'pdf', modalMessage: "Preparing for printing ...", showModal: true })
-}
+  printJS({
+    printable: `${baseURL}Main/GetReport?id=${id}`,
+    type: 'pdf',
+    modalMessage: 'Preparing for printing ...',
+    showModal: true,
+  });
+};
 
 const editSubmit = async (value) => {
   isLoading.value = true;
@@ -237,7 +339,6 @@ const editSubmit = async (value) => {
         cancelButtonColor: '#d33',
         cancelButtonText: 'Close',
       }),
-
         getRequest();
     })
     .catch((error) => {
@@ -261,7 +362,6 @@ const list = ref([]);
 const totalRecords = ref('');
 const pageSize = ref(10);
 const pageNumber = ref(1);
-
 
 const getRequest = () => {
   isLoading.value = true;
@@ -313,15 +413,15 @@ const editRequest = ref({
   dueDate: '',
   beneficaryName: '',
   companyId: '',
-  requestLoction: ''
+  requestLoction: '',
 });
-
 
 const editRequestInfo = (index) => {
   const info = list.value[index];
   editRequest.value.id = info.id;
   editRequest.value.requestedAmount = info.requestedAmount;
-  editRequest.value.purposeOfPaymentAndDetails = info.purposeOfPaymentAndDetails;
+  editRequest.value.purposeOfPaymentAndDetails =
+    info.purposeOfPaymentAndDetails;
   editRequest.value.otherInfo = info.otherInfo;
   editRequest.value.amountCurrency = info.amountCurrency;
   editRequest.value.invoiceNumber = info.invoiceNumber;
@@ -331,12 +431,13 @@ const editRequestInfo = (index) => {
   editRequest.value.paymentMethod = info.paymentMethod;
   editRequest.value.dueDate = info.dueDate.toString().split('T')[0];
   editRequest.value.paymentBudget = info.paymentBudget;
-  editRequest.value.paymentBudgetIfFalseJustification = info.paymentBudgetIfFalseJustification;
+  editRequest.value.paymentBudgetIfFalseJustification =
+    info.paymentBudgetIfFalseJustification;
   editRequest.value.invoiceDate = info.invoiceDate.toString().split('T')[0];
   editRequest.value.beneficaryName = info.beneficaryName;
   editRequest.value.id = info.id;
   editRequest.value.companyId = info.companyId;
-  editRequest.value.requestLoction = info.requestLoction
+  editRequest.value.requestLoction = info.requestLoction;
 };
 
 const requestInfo = ref({
@@ -362,15 +463,21 @@ const showRequestInfo = (index, status, id, isFinished) => {
     (requestInfo.value.invoiceDate = info.invoiceDate),
     (requestInfo.value.dueDate = info.dueDate),
     (requestInfo.value.paymentBudget = info.paymentBudget),
-    (requestInfo.value.purposeOfPaymentAndDetails = info.purposeOfPaymentAndDetails),
+    (requestInfo.value.purposeOfPaymentAndDetails =
+      info.purposeOfPaymentAndDetails),
     (requestInfo.value.requestLoction = info.requestLoction),
-    (requestInfo.value.paymentBudgetIfFalseJustification = info.paymentBudgetIfFalseJustification),
+    (requestInfo.value.paymentBudgetIfFalseJustification =
+      info.paymentBudgetIfFalseJustification),
     (requestInfo.value.lastInfo = info.lastInfo),
     (requestInfo.value.paymentMethod = info.paymentMethod);
-  (requestInfo.value.companyId = info.companyId);
-}
+  requestInfo.value.companyId = info.companyId;
+};
 
-
+const attachmentmodel = (index) => {
+  const info = list.value[index];
+  AttachmenmtForm.value.RequestId = info.id;
+  attachmentList.value = info.attachments;
+};
 </script>
 <template>
   <!-- Post -->
@@ -387,9 +494,9 @@ const showRequestInfo = (index, status, id, isFinished) => {
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Amount</label>
 
-        <Field @keypress="inWords($event)" class="border  border-on_background_variant rounded-full px-4 py-2
-          focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]" name="requestedAmount"
-          min="0" v-model="createRequestForm.requestedAmount" type="number" />
+        <Field @keypress="inWords($event)"
+          class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
+          name="requestedAmount" min="0" v-model="createRequestForm.requestedAmount" type="number" />
         <span class="text-red-500">{{ nWords }}</span>
         <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
       </div>
@@ -428,8 +535,8 @@ const showRequestInfo = (index, status, id, isFinished) => {
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="paymentBudget" v-model="createRequestForm.paymentBudget" type="select" as="select">
-          <option :value=true>yas</option>
-          <option :value=false>No</option>
+          <option :value="true">yas</option>
+          <option :value="false">No</option>
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="paymentBudget" component="div"></ErrorMessage>
       </div>
@@ -507,7 +614,6 @@ const showRequestInfo = (index, status, id, isFinished) => {
           </option>
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="companies" component="div"></ErrorMessage>
-
       </div>
 
       <div class="flex flex-col gap-2">
@@ -515,12 +621,8 @@ const showRequestInfo = (index, status, id, isFinished) => {
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="requestLoction" v-model="createRequestForm.requestLoction" type="select" as="select">
-          <option :value=1>
-            Accounter
-          </option>
-          <option :value=7>
-            Business department manager (BDM)
-          </option>
+          <option :value="1">Accounter</option>
+          <option :value="7">Business department manager (BDM)</option>
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="requestLoction" component="div"></ErrorMessage>
       </div>
@@ -534,9 +636,9 @@ const showRequestInfo = (index, status, id, isFinished) => {
       <!-- Photo -->
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Amount</label>
-        <Field class="border  border-on_background_variant rounded-full px-4 py-2
-          focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]" name="requestedAmount"
-          min="0" v-model="editRequest.requestedAmount" type="number">
+        <Field
+          class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
+          name="requestedAmount" min="0" v-model="editRequest.requestedAmount" type="number">
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
       </div>
@@ -574,8 +676,8 @@ const showRequestInfo = (index, status, id, isFinished) => {
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="paymentBudget" v-model="editRequest.paymentBudget" type="select" as="select">
-          <option :value=true>yas</option>
-          <option :value=false>No</option>
+          <option :value="true">yas</option>
+          <option :value="false">No</option>
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="paymentBudget" component="div"></ErrorMessage>
       </div>
@@ -659,12 +761,8 @@ const showRequestInfo = (index, status, id, isFinished) => {
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
           name="requestLoction" v-model="editRequest.requestLoction" type="select" as="select">
-          <option :value=1>
-            Accounter
-          </option>
-          <option :value=7>
-            Business department manager (BDM)
-          </option>
+          <option :value="1">Accounter</option>
+          <option :value="7">Business department manager (BDM)</option>
         </Field>
         <ErrorMessage class="text-red-600 text-lg" name="requestLoction" component="div"></ErrorMessage>
       </div>
@@ -673,10 +771,50 @@ const showRequestInfo = (index, status, id, isFinished) => {
     </Form>
   </MainModal>
 
+  <MainModal text="Upload Attachment" v-if="isUploadModalOpen" @close="isUploadModalOpen = false">
+    <div class="flex-1 text-center justify-center grid">
+      <Form class="gap-4" @submit="uploadAttachment()">
+        <!-- Photo -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xl text-primary">Attachment File</label>
+          <span>png , jpg , zip , doc , xlsx , xls</span>
+          <Field
+            class="border border-on_background_variant rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
+            name="File" v-model="AttachmenmtForm.File" @change="uploadPhoto('add')" type="file">
+          </Field>
+          <ErrorMessage class="text-red-600 text-lg" name="File" component="div"></ErrorMessage>
+        </div>
+        <MainButton class="mt-5" text="Add" type="submit" />
+      </Form>
+    </div>
+
+    <hr />
+    <div class="grid grid-cols-2">
+      <div v-for="item in attachmentList"
+        class="flex justify-center text-center max-w-sm rounded overflow-hidden shadow-lg mt-7">
+        <img class="w-28" src="../../../public/images/att.png" alt="Sunset in the mountains" />
+        <!-- <div class="px-6 py-4">
+          <div class="font-bold text-xl mb-2">{{ item.attachmentFile }}</div>
+        </div> -->
+        <div class="px-6 pt-4 pb-2">
+          <span class="inline-block bg-orange-400 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2">{{
+              item.insertDate.split('T')[0]
+          }}</span>
+          <span class="inline-block bg-green-500 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2">
+            {{ item.fullName }}
+          </span>
+          <span class="inline-block bg-cyan-900 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2">
+            Download
+          </span>
+        </div>
+      </div>
+    </div>
+  </MainModal>
+
   <MainModal styles="w-[40vw] h-[70vh]" text="Request details" v-if="isInfoModalOpen" @close="isInfoModalOpen = false">
     <div class="grid grid-cols-2 flex-col gap-5">
       <div class="flex flex-col col-span-2 gap-4" v-if="RequestisFinished != true">
-        <div class="flex flex-col gap-2" v-if="(role != 'SupUser' && role != 'HOP' && role != 'HOD')">
+        <div class="flex flex-col gap-2" v-if="role != 'SupUser' && role != 'HOP' && role != 'HOD'">
           <label class="text-xl text-primary">Note</label>
           <Field
             class="border border-on_background_variant bg-background rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300"
@@ -685,7 +823,6 @@ const showRequestInfo = (index, status, id, isFinished) => {
           <ErrorMessage class="text-red-600 text-lg" name="lastInfo" component="div"></ErrorMessage>
         </div>
         <div class="flex gap-4 w-full col-span-2">
-
           <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForCFO')"
             class="bg-green-600 border-none" text="Approval"></MainButton>
 
@@ -698,62 +835,61 @@ const showRequestInfo = (index, status, id, isFinished) => {
           <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForEdit')"
             class="bg-orange-600 border-none" text="Return for modification"></MainButton>
 
-          <MainButton class="bg-red-600 border-none"
-            v-if="((role != 'HOP' || 'HOD') && (role == 'CFO' || role == 'Accounter' || role == 'BDM'))"
-            @click="editStatusRequest('Reject')" text="Reject"></MainButton>
-
+          <MainButton class="bg-red-600 border-none" v-if="
+            (role != 'HOP' || 'HOD') &&
+            (role == 'CFO' || role == 'Accounter' || role == 'BDM')
+          " @click="editStatusRequest('Reject')" text="Reject"></MainButton>
         </div>
       </div>
 
-      <div class="flex flex-col gap-2 text-red-600 bg-white border roundedshadow-sm  p-3 ">
-        <label class="text-xl text-primary text-red-600 ">Note</label>
-        <hr>
+      <div class="flex flex-col gap-2 text-red-600 bg-white border roundedshadow-sm p-3">
+        <label class="text-xl text-primary text-red-600">Note</label>
+        <hr />
         <p class="text-xl text-primary text-red-600">
           {{ requestInfo.lastInfo }}
         </p>
       </div>
 
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Purpose of payment and details</label>
-        <hr>
+        <hr />
         <p>{{ requestInfo.purposeOfPaymentAndDetails }}</p>
       </div>
 
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Request details</label>
-        <hr>
+        <hr />
         <p>{{ requestInfo.otherInfo }}</p>
       </div>
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Payment method </label>
-        <hr>
+        <hr />
         <p>{{ requestInfo.paymentMethod }}</p>
       </div>
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Due date</label>
-        <hr>
-        <p>{{ dayjs(requestInfo.dueDate).format('ddd, DD MMM YYYY') }} </p>
-
+        <hr />
+        <p>{{ dayjs(requestInfo.dueDate).format('ddd, DD MMM YYYY') }}</p>
       </div>
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Invoice Date</label>
-        <hr>
-        <p>{{ dayjs(requestInfo.invoiceDate).format('ddd, DD MMM YYYY') }} </p>
+        <hr />
+        <p>{{ dayjs(requestInfo.invoiceDate).format('ddd, DD MMM YYYY') }}</p>
       </div>
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Beneficary Name</label>
-        <hr>
+        <hr />
         <p>{{ requestInfo.beneficaryName }}</p>
       </div>
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3 ">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Payment Budget</label>
-        <hr>
+        <hr />
         <p v-if="requestInfo.paymentBudget == false">No</p>
         <p v-else>yas</p>
       </div>
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm  p-3" v-if="requestInfo.paymentBudget == false">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3" v-if="requestInfo.paymentBudget == false">
         <label class="text-xl text-primary">Please Provide Reasonable justification</label>
-        <hr>
+        <hr />
         <p>{{ requestInfo.paymentBudgetIfFalseJustification }}</p>
       </div>
     </div>
@@ -805,7 +941,9 @@ const showRequestInfo = (index, status, id, isFinished) => {
                 name="status" v-model="searchform.status" type="select" as="select">
                 <option value="">All</option>
                 <option value="Wait">Pending at Finance</option>
-                <option value="WaitForCompanyManger">Pending at Company Manager</option>
+                <option value="WaitForCompanyManger">
+                  Pending at Company Manager
+                </option>
                 <option value="Reject">Rejected</option>
                 <option value="WaitForEdit">Waiting Update</option>
                 <option value="WaitForCFO">Pending at CFO</option>
@@ -875,12 +1013,18 @@ const showRequestInfo = (index, status, id, isFinished) => {
                   {{ item.companyName }}
                 </td>
 
-                <td class="xl:py-3 xl:px-6 py-2 px-4  flex justify-center align-middle h-[70px] items-center">
+                <td class="xl:py-3 xl:px-6 py-2 px-4 flex justify-center align-middle h-[70px] items-center">
                   <h1
                     class="text-center xl:text-start bg-primary_container text-background max-w-max rounded-2xl px-2 py-2">
-                    {{ item.requestedAmount == "" ? item.requestedAmount :
-                        item.requestedAmount?.toString().match(/.{1,3}/g).join()
-                    }} {{ item.amountCurrency }}
+                    {{
+                        item.requestedAmount == ''
+                          ? item.requestedAmount
+                          : item.requestedAmount
+                            ?.toString()
+                            .match(/.{1,3}/g)
+                            .join()
+                    }}
+                    {{ item.amountCurrency }}
                   </h1>
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]">
@@ -925,14 +1069,23 @@ const showRequestInfo = (index, status, id, isFinished) => {
 
                     <PhEye class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer"
                       @click="
-                        showRequestInfo(index, item.status, item.id, item.isFinished),
+                        showRequestInfo(
+                          index,
+                          item.status,
+                          item.id,
+                          item.isFinished
+                        ),
                         (isInfoModalOpen = true)
                       " />
-                    <PhPrinterDuotone @click="print(item.id)"
-                      v-if="(item.isFinished == true && item.requestLoction == 1 && role == 'Accounter')"
-                      class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer" />
+                    <PhPrinterDuotone @click="print(item.id)" v-if="
+                      item.isFinished == true &&
+                      item.requestLoction == 1 &&
+                      role == 'Accounter'
+                    " class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer" />
+                    <PhFileText @click="
+                      attachmentmodel(index), (isUploadModalOpen = true)
+                    " class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer" />
                   </div>
-
                 </td>
               </tr>
             </tbody>
@@ -941,7 +1094,7 @@ const showRequestInfo = (index, status, id, isFinished) => {
 
         <!--Pag-->
         <nav aria-label="Table navigation" class="flex justify-between items-center py-4">
-          <div class="flex gap-2 items-center bg-primary_container rounded-xl py-2 px-4 ">
+          <div class="flex gap-2 items-center bg-primary_container rounded-xl py-2 px-4">
             <span class="font-bold text-sm text-background">{{
                 paginationIndex + 10 >= totalRecords
                   ? totalRecords
@@ -954,12 +1107,12 @@ const showRequestInfo = (index, status, id, isFinished) => {
           </div>
           <ul class="flex items-center">
             <button :disabled="paginationIndex <= 1"
-              class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2   rounded-l-xl xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
+              class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2 rounded-l-xl xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
               @click="previousPage">
               Previous
             </button>
             <button :disabled="paginationIndex + 10 >= totalRecords"
-              class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2 rounded-r-xl  xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
+              class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2 rounded-r-xl xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
               @click="nextPage">
               Next
             </button>
