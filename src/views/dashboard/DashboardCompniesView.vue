@@ -10,7 +10,6 @@ import dayjs from 'dayjs';
 const validationSchema = ref({
   CompanyName: yup.string().required('This field is required'),
   Photo: yup.string().required('This field is required'),
-
 });
 const validationSchemaEdit = ref({
   CompanyName: yup.string().required('This field is required'),
@@ -19,9 +18,6 @@ const validationSchemaEdit = ref({
 
 const isError = ref(false);
 const isLoading = ref(false);
-
-
-
 
 const submit = async (value) => {
   isLoading.value = true;
@@ -34,7 +30,6 @@ const submit = async (value) => {
   axiosInstance
     .post('Main/AddCompany', formData)
     .then(({ data }) => {
-
       isLoading.value = false;
       isAddModalOpen.value = false;
       Swal.fire({
@@ -45,16 +40,15 @@ const submit = async (value) => {
         cancelButtonColor: '#d33',
         cancelButtonText: 'Close',
       }),
-        createCompanyForm.value = {
+        (createCompanyForm.value = {
           CompanyName: '',
-          Photo: ''
-
-        };
+          Photo: '',
+        });
       getCompany();
     })
     .catch((error) => {
       isLoading.value = true;
-      console.log(error)
+      console.log(error);
     });
 
   return;
@@ -62,15 +56,13 @@ const submit = async (value) => {
 
 const createCompanyForm = ref({
   CompanyName: '',
-  Photo: ''
+  Photo: '',
 });
-
-
 
 const editCompany = ref({
   id: '',
   CompanyName: '',
-  Photo: ''
+  Photo: '',
 });
 
 const editSubmit = async (value) => {
@@ -84,7 +76,6 @@ const editSubmit = async (value) => {
   axiosInstance
     .post('Main/EditCompany?id=' + editCompany.value.id, formData)
     .then(({ data }) => {
-
       isLoading.value = false;
       isEditModalOpen.value = false;
       Swal.fire({
@@ -95,7 +86,6 @@ const editSubmit = async (value) => {
         cancelButtonColor: '#d33',
         cancelButtonText: 'Close',
       }),
-
         getCompany();
     })
     .catch((error) => {
@@ -112,33 +102,27 @@ const editSubmit = async (value) => {
   return;
 };
 
-
 // GET
 
 const companies = ref([]);
 
-
-
 const getCompany = () => {
   isLoading.value = true;
-  axiosInstance.get(`Main/GetCompanies`)
+  axiosInstance
+    .get(`Main/GetCompanies`)
     .then(({ data }) => {
       companies.value = data.data;
       isLoading.value = false;
     })
-    .catch((error) => { });
+    .catch((error) => {});
 };
 getCompany();
-
-
 
 const editCompanyInfo = (index) => {
   const info = companies.value[index];
   editCompany.value.CompanyName = info.companyName;
-  editCompany.value.id = info.id
+  editCompany.value.id = info.id;
 };
-
-
 
 const deleteCompany = async (value) => {
   Swal.fire({
@@ -168,12 +152,11 @@ const deleteCompany = async (value) => {
             (isLoading.value = false);
           getCompany();
         })
-        .catch((error) => { });
+        .catch((error) => {});
     }
   });
   return;
 };
-
 
 /* ------------------------ Index ----------------------- */
 const isAddModalOpen = ref(false);
@@ -187,16 +170,28 @@ const isEditModalOpen = ref(false);
 
   <!-- Modals -->
   <!-- Add Modal -->
-  <MainModal text="Add a new Company" v-if="isAddModalOpen" @close="isAddModalOpen = false">
-    <Form class="flex flex-col gap-4" :validationSchema="validationSchema" @submit="submit">
+  <MainModal
+    text="Add a new Company"
+    v-if="isAddModalOpen"
+    @close="isAddModalOpen = false">
+    <Form
+      class="flex flex-col gap-4"
+      :validationSchema="validationSchema"
+      @submit="submit">
       <!-- Photo -->
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Logo</label>
         <Field
           class="border border-on_background_variant rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="Photo" v-model="createCompanyForm.Photo" @change="uploadPhoto('add')" type="file">
+          name="Photo"
+          v-model="createCompanyForm.Photo"
+          @change="uploadPhoto('add')"
+          type="file">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="Photo" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="Photo"
+          component="div"></ErrorMessage>
       </div>
 
       <!-- Title -->
@@ -204,26 +199,44 @@ const isEditModalOpen = ref(false);
         <label class="text-xl text-primary">Company Name</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="CompanyName" v-model="createCompanyForm.CompanyName" type="text">
+          name="CompanyName"
+          v-model="createCompanyForm.CompanyName"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="CompanyName" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="CompanyName"
+          component="div"></ErrorMessage>
       </div>
-      <MainButton text="Add" type="submit" />
+      <MainButton
+        text="Add"
+        type="submit" />
     </Form>
   </MainModal>
 
   <!-- Edit Modal -->
-  <MainModal text="UpdateCompany" v-if="isEditModalOpen" @close="isEditModalOpen = false">
-
-    <Form class="flex flex-col gap-4" :validationSchema="validationSchemaEdit" @submit="editSubmit">
+  <MainModal
+    text="UpdateCompany"
+    v-if="isEditModalOpen"
+    @close="isEditModalOpen = false">
+    <Form
+      class="flex flex-col gap-4"
+      :validationSchema="validationSchemaEdit"
+      @submit="editSubmit">
       <!-- Photo -->
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Logo</label>
         <Field
           class="border border-on_background_variant rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="photo" v-model="editCompany.Photo" @change="uploadPhoto('add')" type="file">
+          name="photo"
+          v-model="editCompany.Photo"
+          @change="uploadPhoto('add')"
+          type="file">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="Photo" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="Photo"
+          component="div"></ErrorMessage>
       </div>
 
       <!-- Title -->
@@ -231,50 +244,76 @@ const isEditModalOpen = ref(false);
         <label class="text-xl text-primary">Company Name</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="CompanyName" v-model="editCompany.CompanyName" type="text">
+          name="CompanyName"
+          v-model="editCompany.CompanyName"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="CompanyName" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="CompanyName"
+          component="div"></ErrorMessage>
       </div>
-      <MainButton text="Update" type="submit" />
+      <MainButton
+        text="Update"
+        type="submit" />
     </Form>
-
   </MainModal>
 
-  <div class="flex xl:overflow-hidden xl:h-screen relative z-20" v-motion-fade>
+  <div
+    class="flex xl:overflow-hidden xl:h-screen relative z-20"
+    v-motion-fade>
     <DashboardSidebar class="hidden xl:block" />
     <div class="flex flex-col w-full">
       <DashboardNavBar path="Users" />
       <div class="flex flex-col px-4 xl:px-8 mt-32 xl:mt-8 gap-4">
-        <MainButton @click="isAddModalOpen = true" text="Add a new Company">
+        <MainButton
+          @click="isAddModalOpen = true"
+          text="Add a new Company">
         </MainButton>
 
         <!-- Table -->
-        <div class="overflow-x-auto xl:overflow-y-auto relative shadow-md rounded-xl h-full xl:h-[71vh] bg-background">
+        <div
+          class="overflow-x-auto xl:overflow-y-auto relative shadow-md rounded-xl h-full xl:h-[71vh] bg-background">
           <table class="w-full text-right text-on_background">
             <thead class="text-base text-on_primary bg-primary">
               <tr>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   #
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   Logo
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   Company Name
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4 rounded-tr-xl">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4 rounded-tr-xl">
                   Options
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr class="bg-white border-b odd:bg-gray-200 even:bg-background text-sm"
-                v-for="(item, index) in companies" :key="item.id">
+              <tr
+                class="bg-white border-b odd:bg-gray-200 even:bg-background text-sm"
+                v-for="(item, index) in companies"
+                :key="item.id">
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold text-primary">
                   {{ index + 1 }}
                 </td>
-                <th scope="row" class="whitespace-nowrap">
-                  <img class="h-16 w-16 object-cover rounded-[50px] my-1" :src="item.photo" alt="" />
+                <th
+                  scope="row"
+                  class="whitespace-nowrap">
+                  <img
+                    class="h-16 w-16 object-cover rounded-[50px] my-1"
+                    :src="item.companyLogo"
+                    alt="" />
                 </th>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold">
                   {{ item.companyName }}
@@ -282,10 +321,14 @@ const isEditModalOpen = ref(false);
 
                 <td class="xl:py-3 xl:px-6 py-2 px-4">
                   <div class="flex items-center gap-2">
-                    <PhTrash class="w-6 h-6 fill-red-500 hover:scale-105 transition-all duration-300 cursor-pointer"
+                    <PhTrash
+                      class="w-6 h-6 fill-red-500 hover:scale-105 transition-all duration-300 cursor-pointer"
                       @click="deleteCompany(item.id)" />
-                    <PhPencil class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer"
-                      @click="editCompanyInfo(index), (isEditModalOpen = true)" />
+                    <PhPencil
+                      class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer"
+                      @click="
+                        editCompanyInfo(index), (isEditModalOpen = true)
+                      " />
                   </div>
                 </td>
               </tr>
