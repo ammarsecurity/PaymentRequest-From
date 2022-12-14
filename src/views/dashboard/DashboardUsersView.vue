@@ -157,7 +157,7 @@ const getUsers = () => {
       totalRecords.value = data.totalRecords;
       isLoading.value = false;
     })
-    .catch((error) => { });
+    .catch((error) => {});
 };
 getUsers();
 
@@ -169,29 +169,27 @@ const getCompany = () => {
       companies.value = data.data;
       isLoading.value = false;
     })
-    .catch((error) => { });
+    .catch((error) => {});
 };
 
+const userListCompaiesData = ref([]);
 getCompany();
 
 const getUserid = (index) => {
   const info = users.value[index];
-  userListCompaies.value = info.companies;
+  userListCompaiesData.value = info.companies;
   userid.value = info.id;
-}
+};
 const addCompany = (event) => {
   const companyinfo = event.target.value;
   const companyid = companyinfo.split('_')[0];
   const companyName = companyinfo.split('_')[1];
-  userListCompaies.value = ({
+  userListCompaies.value = {
     companyId: companyid,
     companyName: companyName,
     uesrId: userid,
-  });
-
-  console.log(userListCompaies.value);
-
-}
+  };
+};
 
 const addCompanies = () => {
   axiosInstance
@@ -288,7 +286,7 @@ const deleteUser = async (value) => {
             (isLoading.value = false);
           getUsers();
         })
-        .catch((error) => { });
+        .catch((error) => {});
     }
   });
   return;
@@ -306,31 +304,48 @@ const isCompanyAddModalOpen = ref(false);
   <MainLoader v-if="isLoading" />
 
   <!-- Modals -->
-  <MainModal text="Add company to user" v-if="isCompanyAddModalOpen" @close="isCompanyAddModalOpen = false">
+  <MainModal
+    text="Add company to user"
+    v-if="isCompanyAddModalOpen"
+    @close="isCompanyAddModalOpen = false">
     <div class="flex flex-col gap-2">
       <label class="text-xl text-primary">Company</label>
       <Field
         class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-        name="companies" type="select" as="select" @change="addCompany($event)">
-        <option v-for="item in companies" :value="item.id + '_' + item.companyName">
+        name="companies"
+        type="select"
+        as="select"
+        @change="addCompany($event)">
+        <option
+          v-for="item in companies"
+          :value="item.id + '_' + item.companyName">
           {{ item.companyName }}
         </option>
       </Field>
     </div>
     <div class="my-5 flex">
-      <span v-for="items in userListCompaies"
+      <span
+        v-for="items in userListCompaiesData"
         class="flex items-center gap-2 text-center xl:text-start bg-primary_container text-background max-w-max rounded-2xl px-2 py-2 m-1">
         {{ items.companyName }}
         <PhTrash class="fill-on_primary" />
       </span>
     </div>
 
-    <MainButton text="Add" @click="addCompanies()" />
+    <MainButton
+      text="Add"
+      @click="addCompanies()" />
   </MainModal>
 
   <!-- Add Modal -->
-  <MainModal text="Add a new account" v-if="isAddModalOpen" @close="isAddModalOpen = false">
-    <Form class="flex flex-col gap-4" :validationSchema="validationSchema" @submit="submit">
+  <MainModal
+    text="Add a new account"
+    v-if="isAddModalOpen"
+    @close="isAddModalOpen = false">
+    <Form
+      class="flex flex-col gap-4"
+      :validationSchema="validationSchema"
+      @submit="submit">
       <!-- Photo -->
       <!-- <div class="flex flex-col gap-2" v-if="isUser == false">
         <label class="text-xl text-primary">Picture or logo</label>
@@ -346,66 +361,109 @@ const isCompanyAddModalOpen = ref(false);
         <label class="text-xl text-primary">Full Name</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="FullName" v-model="createUserForm.FullName" type="text">
+          name="FullName"
+          v-model="createUserForm.FullName"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="FullName" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="FullName"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Email</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="Email" v-model="createUserForm.Email" type="text">
+          name="Email"
+          v-model="createUserForm.Email"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="Email" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="Email"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Phone Number</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="PhoneNumber" v-model="createUserForm.PhoneNumber" type="text">
+          name="PhoneNumber"
+          v-model="createUserForm.PhoneNumber"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="PhoneNumber" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="PhoneNumber"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Password</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="Password" v-model="createUserForm.Password" type="password">
+          name="Password"
+          v-model="createUserForm.Password"
+          type="password">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="Password" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="Password"
+          component="div"></ErrorMessage>
       </div>
 
-      <div class="flex flex-col gap-2" v-if="isUser == false">
+      <div
+        class="flex flex-col gap-2"
+        v-if="isUser == false">
         <label class="text-xl text-primary">Title</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="UserRole" v-model="createUserForm.UserRole" type="select" as="select">
+          name="UserRole"
+          v-model="createUserForm.UserRole"
+          type="select"
+          as="select">
           <option value="6">HOD</option>
           <option value="5">HOP</option>
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="UserRole" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="UserRole"
+          component="div"></ErrorMessage>
       </div>
-      <div class="flex flex-col gap-2" v-if="isUser == true">
+      <div
+        class="flex flex-col gap-2"
+        v-if="isUser == true">
         <label class="text-xl text-primary">Company</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="companies" v-model="createUserForm.CompanyId" type="select" as="select">
-          <option v-for="item in companies" :value="item.id">
+          name="companies"
+          v-model="createUserForm.CompanyId"
+          type="select"
+          as="select">
+          <option
+            v-for="item in companies"
+            :value="item.id">
             {{ item.companyName }}
           </option>
         </Field>
       </div>
 
-      <MainButton text="Add" type="submit" />
+      <MainButton
+        text="Add"
+        type="submit" />
     </Form>
   </MainModal>
 
   <!-- Edit Modal -->
-  <MainModal text="UpdateUser" v-if="isEditModalOpen" @close="isEditModalOpen = false">
-    <Form class="flex flex-col gap-4" :validationSchema="validationSchemaEdit" @submit="editSubmit">
+  <MainModal
+    text="UpdateUser"
+    v-if="isEditModalOpen"
+    @close="isEditModalOpen = false">
+    <Form
+      class="flex flex-col gap-4"
+      :validationSchema="validationSchemaEdit"
+      @submit="editSubmit">
       <!-- Photo -->
       <!-- <div class="flex flex-col gap-2" v-if="isUser == false">
         <label class="text-xl text-primary">Picture or logo</label>
@@ -421,110 +479,178 @@ const isCompanyAddModalOpen = ref(false);
         <label class="text-xl text-primary">Full Name</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="FullName" v-model="editUser.FullName" type="text">
+          name="FullName"
+          v-model="editUser.FullName"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="FullName" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="FullName"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Email</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="Email" v-model="editUser.Email" type="text">
+          name="Email"
+          v-model="editUser.Email"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="Email" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="Email"
+          component="div"></ErrorMessage>
       </div>
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Phone Number</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="PhoneNumber" v-model="editUser.PhoneNumber" type="text">
+          name="PhoneNumber"
+          v-model="editUser.PhoneNumber"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="PhoneNumber" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="PhoneNumber"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Password</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="Password" v-model="editUser.Password" type="password">
+          name="Password"
+          v-model="editUser.Password"
+          type="password">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="Password" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="Password"
+          component="div"></ErrorMessage>
       </div>
 
-      <div class="flex flex-col gap-2" v-if="isUser == false">
+      <div
+        class="flex flex-col gap-2"
+        v-if="isUser == false">
         <label class="text-xl text-primary">Title</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="UserRole" v-model="editUser.UserRole" type="select" as="select">
+          name="UserRole"
+          v-model="editUser.UserRole"
+          type="select"
+          as="select">
           <option value="6">HOD</option>
           <option value="5">HOP</option>
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="UserRole" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="UserRole"
+          component="div"></ErrorMessage>
       </div>
-      <div class="flex flex-col gap-2" v-if="isUser == true">
+      <div
+        class="flex flex-col gap-2"
+        v-if="isUser == true">
         <label class="text-xl text-primary">Company</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="companies" v-model="editUser.CompanyId" type="select" as="select">
-          <option value="" selected>Select</option>
-          <option v-for="item in companies" :value="item.id">
+          name="companies"
+          v-model="editUser.CompanyId"
+          type="select"
+          as="select">
+          <option
+            value=""
+            selected>
+            Select
+          </option>
+          <option
+            v-for="item in companies"
+            :value="item.id">
             {{ item.companyName }}
           </option>
         </Field>
       </div>
 
-      <MainButton text="Update" type="submit" />
+      <MainButton
+        text="Update"
+        type="submit" />
     </Form>
   </MainModal>
 
-  <div class="flex xl:overflow-hidden xl:h-screen relative z-20" v-motion-fade>
+  <div
+    class="flex xl:overflow-hidden xl:h-screen relative z-20"
+    v-motion-fade>
     <DashboardSidebar class="hidden xl:block" />
     <div class="flex flex-col w-full">
       <DashboardNavBar path="Users" />
       <div class="flex flex-col px-4 xl:px-8 mt-32 xl:mt-8 gap-4">
-        <MainButton @click="isAddModalOpen = true" text="Add a new account">
+        <MainButton
+          @click="isAddModalOpen = true"
+          text="Add a new account">
         </MainButton>
 
         <!-- Table -->
-        <div class="overflow-x-auto xl:overflow-y-auto relative shadow-md rounded-xl h-full xl:h-[71vh] bg-background">
+        <div
+          class="overflow-x-auto xl:overflow-y-auto relative shadow-md rounded-xl h-full xl:h-[71vh] bg-background">
           <table class="w-full text-right text-on_background">
             <thead class="text-base text-on_primary bg-primary">
               <tr>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   #
                 </th>
                 <!-- <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
                   Picture or logo
                 </th> -->
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   Full Name
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   Email
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   Phone Number
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4" v-if="isUser == true">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4"
+                  v-if="isUser == true">
                   Company
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4" v-if="isUser == false">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4"
+                  v-if="isUser == false">
                   Companies
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   Title
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   Added date
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4 rounded-tr-xl">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4 rounded-tr-xl">
                   Options
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr class="bg-white border-b odd:bg-gray-200 even:bg-background text-sm" v-for="(item, index) in users"
+              <tr
+                class="bg-white border-b odd:bg-gray-200 even:bg-background text-sm"
+                v-for="(item, index) in users"
                 :key="item.id">
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold text-primary">
                   {{ index + 1 + paginationIndex }}
@@ -541,46 +667,67 @@ const isCompanyAddModalOpen = ref(false);
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]">
                   {{ item.phoneNumber }}
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 flex justify-center align-middle h-[70px] items-center">
-                  <h1 v-if="isUser == true"
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 flex justify-center align-middle h-[70px] items-center">
+                  <h1
+                    v-if="isUser == true"
                     class="text-center xl:text-start bg-primary_container text-background max-w-max rounded-2xl px-2 py-2">
                     {{ item.companyName }}
                   </h1>
                   <h1 v-else>
-                    <PhBuildings class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer"
+                    <PhBuildings
+                      class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer"
                       @click="
                         getUserid(index), (isCompanyAddModalOpen = true)
                       " />
                   </h1>
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.userRole == 1">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.userRole == 1">
                   Accountant
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.userRole == 2">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.userRole == 2">
                   Company
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.userRole == 4">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.userRole == 4">
                   CFO
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.userRole == 3">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.userRole == 3">
                   Subuser
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.userRole == 6">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.userRole == 6">
                   HOD
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.userRole == 5">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.userRole == 5">
                   HOP
+                </td>
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.userRole == 7">
+                  BDM
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4">
                   {{ dayjs(item.created).format('ddd, DD MMM YYYY') }}
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4">
                   <div class="flex items-center gap-2">
-                    <PhTrash class="w-6 h-6 fill-red-500 hover:scale-105 transition-all duration-300 cursor-pointer"
+                    <PhTrash
+                      class="w-6 h-6 fill-red-500 hover:scale-105 transition-all duration-300 cursor-pointer"
                       @click="deleteUser(item.id)" />
-                    <PhPencil class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer"
+                    <PhPencil
+                      class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer"
                       @click="editUserInfo(index), (isEditModalOpen = true)" />
-
                   </div>
                 </td>
               </tr>
@@ -589,25 +736,30 @@ const isCompanyAddModalOpen = ref(false);
         </div>
 
         <!--Pag-->
-        <nav aria-label="Table navigation" class="flex justify-between items-center py-4">
-          <div class="flex gap-2 items-center bg-primary_container py-2 px-4 rounded-xl">
+        <nav
+          aria-label="Table navigation"
+          class="flex justify-between items-center py-4">
+          <div
+            class="flex gap-2 items-center bg-primary_container py-2 px-4 rounded-xl">
             <span class="font-bold text-sm text-background">{{
-                paginationIndex + 10 >= totalRecords
-                  ? totalRecords
-                  : paginationIndex + 10
+              paginationIndex + 10 >= totalRecords
+                ? totalRecords
+                : paginationIndex + 10
             }}</span>
             <span class="text-on_background">From</span>
             <span class="font-bold text-sm text-background">{{
-                totalRecords
+              totalRecords
             }}</span>
           </div>
           <ul class="flex items-center">
-            <button :disabled="paginationIndex <= 1"
+            <button
+              :disabled="paginationIndex <= 1"
               class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2 rounded-l-xl xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
               @click="previousPage">
               Previous
             </button>
-            <button :disabled="paginationIndex + 10 >= totalRecords"
+            <button
+              :disabled="paginationIndex + 10 >= totalRecords"
               class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2 rounded-r-xl xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
               @click="nextPage">
               Next

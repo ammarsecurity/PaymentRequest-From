@@ -45,8 +45,12 @@ const role = localStorage.getItem('role');
           Reports
         </RouterLink>
         <RouterLink class="sidebar-item" to="/dashboard/compnies" v-if="(role == 'Accounter')">
-          <PhUser class="sidebar-item-icon" />
+          <PhBuildings class="sidebar-item-icon" />
           Companies
+        </RouterLink>
+        <RouterLink class="sidebar-item" to="/dashboard/logs" v-if="(role == 'Accounter')">
+          <PhFileText class="sidebar-item-icon" />
+          Logs
         </RouterLink>
         <RouterLink class="sidebar-item" to="/dashboard/users"
           v-if="(role == 'HOD' || role == 'HOP' || role == 'Accounter')">

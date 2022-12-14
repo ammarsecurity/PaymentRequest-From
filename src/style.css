@@ -73,9 +73,9 @@ tr {
   text-align: center;
 }
 .sidebar-item {
-  @apply w-full rounded-full flex gap-3 hover:gap-4 py-3 px-6 duration-300 hover:bg-primary_container text-xl items-center text-on_background;
+  @apply w-full rounded-full flex gap-2 hover:gap-4 py-2 px-6 duration-300 hover:bg-primary_container hover:text-on_primary hover:fill-on_primary text-lg items-center text-on_background;
 }
 
 .sidebar-item-icon {
-  @apply w-7 h-7 fill-on_background;
+  @apply w-7 h-7;
 }

@@ -16,6 +16,7 @@ import DashboardHome from '@/views/dashboard/DashboardHome.vue';
 import DashboardRequestReportsView from '@/views/dashboard/DashboardRequestReportsView.vue';
 import DashboardRequestFinishedView from '@/views/dashboard/DashboardRequestFinishedView.vue';
 import DashboardRequestRejectedView from '@/views/dashboard/DashboardRequestRejectedView.vue';
+import DashboardLogsView from '@/views/dashboard/DashboardLogsView.vue';
 import DashboardCompniesView from '@/views/dashboard/DashboardCompniesView.vue';
 
 const router = createRouter({
@@ -72,6 +73,11 @@ const router = createRouter({
       path: '/dashboard/supusersrequest',
       name: 'dashboard-supusersrequest',
       component: DashboardSubUserRequestView,
+    },
+    {
+      path: '/dashboard/logs',
+      name: 'dashboard-logs',
+      component: DashboardLogsView,
     },
     {
       path: '/dashboard/compnies',

@@ -27,10 +27,11 @@ onClickOutside(modal, close);
         class="flex flex-col items-end bg-background dark:bg-background_dark rounded-2xl max-h-[90vh] max-w-[90vw] overflow-y-auto overflow-x-hidden"
         ref="modal" v-motion-pop>
         <div class="flex justify-between pt-6 px-6 w-full">
+
+          <h1 class="text-2xl text-primary dark:text-primary_dark font-bold">{{ text }}</h1>
           <PhX
             class="fill-on_background dark:fill-on_background_dark w-6 h-6 transition-all duration-300 hover:scale-110 hover:fill-red cursor-pointer"
             @click="close" />
-          <h1 class="text-2xl text-primary dark:text-primary_dark font-bold">{{ text }}</h1>
         </div>
         <div class="w-full overflow-y-auto rounded-lg xl:rounded-2xl p-4 py-8 flex flex-col gap-4">
           <slot></slot>
