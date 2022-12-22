@@ -655,7 +655,7 @@ const attachmentmodel = (index) => {
           v-model="createRequestForm.paymentBudget"
           type="select"
           as="select">
-          <option :value="true">yas</option>
+          <option :value="true">yes</option>
           <option :value="false">No</option>
         </Field>
         <ErrorMessage
@@ -900,7 +900,7 @@ const attachmentmodel = (index) => {
           v-model="editRequest.paymentBudget"
           type="select"
           as="select">
-          <option :value="true">yas</option>
+          <option :value="true">yes</option>
           <option :value="false">No</option>
         </Field>
         <ErrorMessage
@@ -1227,7 +1227,7 @@ const attachmentmodel = (index) => {
         <label class="text-xl text-primary">Payment Budget</label>
         <hr />
         <p v-if="requestInfo.paymentBudget == false">No</p>
-        <p v-else>yas</p>
+        <p v-else>yes</p>
       </div>
       <div
         class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3"

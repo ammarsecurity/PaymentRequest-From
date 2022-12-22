@@ -33,7 +33,6 @@ const AttachmenmtForm = ref({
   RequestId: '',
 });
 
-
 const uploadAttachment = async (value) => {
   isLoading.value = true;
   isError.value = false;
@@ -138,7 +137,7 @@ const submit = async (value) => {
         cancelButtonColor: '#d33',
         cancelButtonText: 'Close',
       }),
-        createRequestForm.value = {
+        (createRequestForm.value = {
           requestedAmount: '',
           amountCurrency: '',
           purposeOfPaymentAndDetails: '',
@@ -149,11 +148,10 @@ const submit = async (value) => {
           invoiceNumber: '',
           invoiceDate: '',
           dueDate: '',
-        };
+        });
       getRequest();
     })
     .catch((error) => {
-
       isLoading.value = false;
       Swal.fire({
         title: 'Error',
@@ -168,21 +166,25 @@ const submit = async (value) => {
   return;
 };
 
-
-
 const lastInfo = ref('Nothing');
 const requestId = ref('');
 const requeststatus = ref('');
 const paymentBudgetReason = computed(() => {
   return createRequestForm.value.paymentBudget;
-})
-
+});
 
 const editStatusRequest = async (value) => {
   isLoading.value = true;
   isError.value = false;
   axiosInstance
-    .post('Main/EditRequset?id=' + requestId.value + '&message=' + lastInfo.value + '&status=' + value)
+    .post(
+      'Main/EditRequset?id=' +
+        requestId.value +
+        '&message=' +
+        lastInfo.value +
+        '&status=' +
+        value
+    )
     .then(({ data }) => {
       isLoading.value = false;
       isInfoModalOpen.value = false;
@@ -194,7 +196,6 @@ const editStatusRequest = async (value) => {
         cancelButtonColor: '#d33',
         cancelButtonText: 'Close',
       }),
-
         getRequest();
     })
     .catch((error) => {
@@ -228,7 +229,6 @@ const editSubmit = async (value) => {
         cancelButtonColor: '#d33',
         cancelButtonText: 'Close',
       }),
-
         getRequest();
     })
     .catch((error) => {
@@ -251,7 +251,6 @@ const list = ref([]);
 const totalRecords = ref('');
 const pageSize = ref(10);
 const pageNumber = ref(1);
-
 
 const getRequest = () => {
   isLoading.value = true;
@@ -302,12 +301,12 @@ const editRequest = ref({
   BeneficaryName: '',
 });
 
-
 const editRequestInfo = (index) => {
   const info = list.value[index];
   editRequest.value.id = info.id;
   editRequest.value.requestedAmount = info.requestedAmount;
-  editRequest.value.purposeOfPaymentAndDetails = info.purposeOfPaymentAndDetails;
+  editRequest.value.purposeOfPaymentAndDetails =
+    info.purposeOfPaymentAndDetails;
   editRequest.value.otherInfo = info.otherInfo;
   editRequest.value.amountCurrency = info.amountCurrency;
   editRequest.value.invoiceNumber = info.invoiceNumber;
@@ -317,9 +316,10 @@ const editRequestInfo = (index) => {
   editRequest.value.paymentMethod = info.paymentMethod;
   editRequest.value.dueDate = info.dueDate.toString().split('T')[0];
   editRequest.value.paymentBudget = info.paymentBudget;
-  editRequest.value.paymentBudgetIfFalseJustification = info.paymentBudgetIfFalseJustification;
+  editRequest.value.paymentBudgetIfFalseJustification =
+    info.paymentBudgetIfFalseJustification;
   editRequest.value.invoiceDate = info.invoiceDate.toString().split('T')[0];
-  editRequest.value.BeneficaryName = info.beneficaryName
+  editRequest.value.BeneficaryName = info.beneficaryName;
   editRequest.value.id = info.id;
 };
 
@@ -332,9 +332,7 @@ const requestInfo = ref({
   dueDate: '',
   paymentBudget: '',
   requestLoction: '',
-
 });
-
 
 const showRequestInfo = (index, status, id) => {
   requestId.value = id;
@@ -353,7 +351,6 @@ const showRequestInfo = (index, status, id) => {
       info.paymentBudgetIfFalseJustification),
     (requestInfo.value.lastInfo = info.lastInfo),
     (requestInfo.value.paymentMethod = info.paymentMethod);
-
 };
 
 /* ------------------------ Index ----------------------- */
@@ -362,46 +359,64 @@ const isEditModalOpen = ref(false);
 const isInfoModalOpen = ref(false);
 </script>
 <template>
-
-  <MainModal text="Upload Attachment" v-if="isUploadModalOpen" @close="isUploadModalOpen = false">
+  <MainModal
+    text="Upload Attachment"
+    v-if="isUploadModalOpen"
+    @close="isUploadModalOpen = false">
     <div class="flex-1 text-center justify-center grid">
-      <Form class="gap-4" @submit="uploadAttachment()">
+      <Form
+        class="gap-4"
+        @submit="uploadAttachment()">
         <!-- Photo -->
         <div class="flex flex-col gap-2">
           <label class="text-xl text-primary">Attachment File</label>
           <span>png , jpg , zip , doc , xlsx , xls</span>
           <Field
             class="border border-on_background_variant rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-            name="File" v-model="AttachmenmtForm.File" @change="uploadPhoto('add')" type="file">
+            name="File"
+            v-model="AttachmenmtForm.File"
+            @change="uploadPhoto('add')"
+            type="file">
           </Field>
-          <ErrorMessage class="text-red-600 text-lg" name="File" component="div"></ErrorMessage>
+          <ErrorMessage
+            class="text-red-600 text-lg"
+            name="File"
+            component="div"></ErrorMessage>
         </div>
-        <MainButton class="mt-5" text="Add" type="submit" />
+        <MainButton
+          class="mt-5"
+          text="Add"
+          type="submit" />
       </Form>
     </div>
 
     <hr />
     <div class="grid grid-cols-2">
-      <div v-for="item in attachmentList"
+      <div
+        v-for="item in attachmentList"
         class="flex justify-center text-center max-w-sm rounded overflow-hidden shadow-lg mt-7">
-        <img class="w-28" src="../../../public/images/att.png" alt="Sunset in the mountains" />
+        <img
+          class="w-28"
+          src="../../../public/images/att.png"
+          alt="Sunset in the mountains" />
         <!-- <div class="px-6 py-4">
             <div class="font-bold text-xl mb-2">{{ item.attachmentFile }}</div>
           </div> -->
         <div class="px-6 pt-4 pb-2">
-          <span class="inline-block bg-orange-400 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2">{{
-              item.insertDate.split('T')[0]
-          }}</span>
-          <span class="inline-block bg-green-500 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2">
+          <span
+            class="inline-block bg-orange-400 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2"
+            >{{ item.insertDate.split('T')[0] }}</span
+          >
+          <span
+            class="inline-block bg-green-500 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2">
             {{ item.fullName }}
           </span>
           <a :href="item.attachmentFile">
-            <span class="inline-block bg-cyan-900 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2">
+            <span
+              class="inline-block bg-cyan-900 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2">
               Download
             </span>
-
           </a>
-
         </div>
       </div>
     </div>
@@ -411,60 +426,98 @@ const isInfoModalOpen = ref(false);
 
   <!-- Modals -->
   <!-- Add Modal -->
-  <MainModal styles="max-w-max" text="Add a new request" v-if="isAddModalOpen" @close="isAddModalOpen = false">
-    <Form class="gap-4" :validationSchema="validationSchema" @submit="submit">
+  <MainModal
+    styles="max-w-max"
+    text="Add a new request"
+    v-if="isAddModalOpen"
+    @close="isAddModalOpen = false">
+    <Form
+      class="gap-4"
+      :validationSchema="validationSchema"
+      @submit="submit">
       <!-- Title -->
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Amount</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="requestedAmount" v-model="createRequestForm.requestedAmount" type="number">
+          name="requestedAmount"
+          v-model="createRequestForm.requestedAmount"
+          type="number">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="requestedAmount"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Currency</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="amountCurrency" v-model="createRequestForm.amountCurrency" type="select" as="select">
+          name="amountCurrency"
+          v-model="createRequestForm.amountCurrency"
+          type="select"
+          as="select">
           <option value="IQD">IQD</option>
           <option value="USD">USD</option>
           <option value="ERUO">EURO</option>
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="amountCurrency" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="amountCurrency"
+          component="div"></ErrorMessage>
       </div>
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Payment method</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="paymentMethod" v-model="createRequestForm.paymentMethod" type="select" as="select">
+          name="paymentMethod"
+          v-model="createRequestForm.paymentMethod"
+          type="select"
+          as="select">
           <option value="Cash">Cash</option>
           <option value="WireTransfer">Wire Transfer</option>
           <option value="WesternUnion">Western union</option>
           <option value="Cheque">Cheque</option>
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="paymentMethod" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="paymentMethod"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Payment Budget</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="paymentBudget" v-model="createRequestForm.paymentBudget" type="select" as="select">
-          <option :value=true>yas</option>
-          <option :value=false>No</option>
+          name="paymentBudget"
+          v-model="createRequestForm.paymentBudget"
+          type="select"
+          as="select">
+          <option :value="true">yes</option>
+          <option :value="false">No</option>
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="paymentBudget" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="paymentBudget"
+          component="div"></ErrorMessage>
       </div>
-      <div class="flex flex-col gap-2" v-if="!paymentBudgetReason">
-        <label class="text-xl text-primary">Please Provide Reasonable justification</label>
+      <div
+        class="flex flex-col gap-2"
+        v-if="!paymentBudgetReason">
+        <label class="text-xl text-primary"
+          >Please Provide Reasonable justification</label
+        >
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="paymentBudgetIfFalseJustification" v-model="createRequestForm.paymentBudgetIfFalseJustification"
+          name="paymentBudgetIfFalseJustification"
+          v-model="createRequestForm.paymentBudgetIfFalseJustification"
           type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="paymentBudgetIfFalseJustification" component="div">
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="paymentBudgetIfFalseJustification"
+          component="div">
         </ErrorMessage>
       </div>
 
@@ -472,113 +525,186 @@ const isInfoModalOpen = ref(false);
         <label class="text-xl text-primary">Invoice Number</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="invoiceNumber" v-model="createRequestForm.invoiceNumber" type="text">
+          name="invoiceNumber"
+          v-model="createRequestForm.invoiceNumber"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="invoiceNumber" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="invoiceNumber"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Invoice Date</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="invoiceDate" v-model="createRequestForm.invoiceDate" type="date">
+          name="invoiceDate"
+          v-model="createRequestForm.invoiceDate"
+          type="date">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="invoiceDate" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="invoiceDate"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Due Date</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="dueDate" v-model="createRequestForm.dueDate" type="date">
+          name="dueDate"
+          v-model="createRequestForm.dueDate"
+          type="date">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="dueDate" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="dueDate"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Beneficary Name</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="BeneficaryName" v-model="createRequestForm.BeneficaryName" type="text">
+          name="BeneficaryName"
+          v-model="createRequestForm.BeneficaryName"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="BeneficaryName" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="BeneficaryName"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">Purpose of payment and details</label>
+        <label class="text-xl text-primary"
+          >Purpose of payment and details</label
+        >
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="purposeOfPaymentAndDetails" v-model="createRequestForm.purposeOfPaymentAndDetails" type="text">
+          name="purposeOfPaymentAndDetails"
+          v-model="createRequestForm.purposeOfPaymentAndDetails"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="purposeOfPaymentAndDetails" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="purposeOfPaymentAndDetails"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Other details</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="otherInfo" v-model="createRequestForm.otherInfo" type="text">
+          name="otherInfo"
+          v-model="createRequestForm.otherInfo"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="otherInfo" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="otherInfo"
+          component="div"></ErrorMessage>
       </div>
-      <MainButton class="col-span-2" text="Add" type="submit" />
+      <MainButton
+        class="col-span-2"
+        text="Add"
+        type="submit" />
     </Form>
   </MainModal>
 
   <!-- Edit Modal -->
-  <MainModal text="Update Order" v-if="isEditModalOpen" @close="isEditModalOpen = false">
-    <Form class="gap-4" :validationSchema="validationSchemaEdit" @submit="editSubmit">
+  <MainModal
+    text="Update Order"
+    v-if="isEditModalOpen"
+    @close="isEditModalOpen = false">
+    <Form
+      class="gap-4"
+      :validationSchema="validationSchemaEdit"
+      @submit="editSubmit">
       <!-- Photo -->
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Amount</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="requestedAmount" v-model="editRequest.requestedAmount" type="number">
+          name="requestedAmount"
+          v-model="editRequest.requestedAmount"
+          type="number">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="requestedAmount" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="requestedAmount"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Currency</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="amountCurrency" v-model="editRequest.amountCurrency" type="select" as="select">
+          name="amountCurrency"
+          v-model="editRequest.amountCurrency"
+          type="select"
+          as="select">
           <option value="IQD">IQD</option>
           <option value="USD">USD</option>
           <option value="ERUO">EURO</option>
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="amountCurrency" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="amountCurrency"
+          component="div"></ErrorMessage>
       </div>
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Payment method</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="paymentMethod" v-model="editRequest.paymentMethod" type="select" as="select">
+          name="paymentMethod"
+          v-model="editRequest.paymentMethod"
+          type="select"
+          as="select">
           <option value="Cash">Cash</option>
           <option value="WireTransfer">Wire Transfer</option>
           <option value="WesternUnion">Western union</option>
           <option value="Cheque">Cheque</option>
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="paymentMethod" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="paymentMethod"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Payment Budget</label>
         <Field
           class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="paymentBudget" v-model="editRequest.paymentBudget" type="select" as="select">
-          <option :value=true>yas</option>
-          <option :value=false>No</option>
+          name="paymentBudget"
+          v-model="editRequest.paymentBudget"
+          type="select"
+          as="select">
+          <option :value="true">yes</option>
+          <option :value="false">No</option>
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="paymentBudget" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="paymentBudget"
+          component="div"></ErrorMessage>
       </div>
-      <div class="flex flex-col gap-2" v-if="editRequest.paymentBudget == false">
-        <label class="text-xl text-primary">Please Provide Reasonable justification</label>
+      <div
+        class="flex flex-col gap-2"
+        v-if="editRequest.paymentBudget == false">
+        <label class="text-xl text-primary"
+          >Please Provide Reasonable justification</label
+        >
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="paymentBudgetIfFalseJustification" v-model="editRequest.paymentBudgetIfFalseJustification" type="text">
+          name="paymentBudgetIfFalseJustification"
+          v-model="editRequest.paymentBudgetIfFalseJustification"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="paymentBudgetIfFalseJustification" component="div">
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="paymentBudgetIfFalseJustification"
+          component="div">
         </ErrorMessage>
       </div>
 
@@ -586,205 +712,310 @@ const isInfoModalOpen = ref(false);
         <label class="text-xl text-primary">Invoice Number</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="invoiceNumber" v-model="editRequest.invoiceNumber" type="text">
+          name="invoiceNumber"
+          v-model="editRequest.invoiceNumber"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="invoiceNumber" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="invoiceNumber"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Invoice Date</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="invoiceDate" v-model="editRequest.invoiceDate" type="date">
+          name="invoiceDate"
+          v-model="editRequest.invoiceDate"
+          type="date">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="invoiceDate" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="invoiceDate"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Due Date</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="dueDate" v-model="editRequest.dueDate" type="date">
+          name="dueDate"
+          v-model="editRequest.dueDate"
+          type="date">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="dueDate" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="dueDate"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Beneficary Name</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="BeneficaryName" v-model="editRequest.BeneficaryName" type="text">
+          name="BeneficaryName"
+          v-model="editRequest.BeneficaryName"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="BeneficaryName" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="BeneficaryName"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">Purpose of payment and details</label>
+        <label class="text-xl text-primary"
+          >Purpose of payment and details</label
+        >
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="purposeOfPaymentAndDetails" v-model="editRequest.purposeOfPaymentAndDetails" type="text">
+          name="purposeOfPaymentAndDetails"
+          v-model="editRequest.purposeOfPaymentAndDetails"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="purposeOfPaymentAndDetails" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="purposeOfPaymentAndDetails"
+          component="div"></ErrorMessage>
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-xl text-primary">Other details</label>
         <Field
           class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="otherInfo" v-model="editRequest.otherInfo" type="text">
+          name="otherInfo"
+          v-model="editRequest.otherInfo"
+          type="text">
         </Field>
-        <ErrorMessage class="text-red-600 text-lg" name="otherInfo" component="div"></ErrorMessage>
+        <ErrorMessage
+          class="text-red-600 text-lg"
+          name="otherInfo"
+          component="div"></ErrorMessage>
       </div>
 
-      <MainButton class="col-span-2" text="Update" type="submit" />
+      <MainButton
+        class="col-span-2"
+        text="Update"
+        type="submit" />
     </Form>
   </MainModal>
 
-  <MainModal styles="w-[40vw] h-[70vh]" text="Order details" v-if="isInfoModalOpen" @close="isInfoModalOpen = false">
-    <div class="grid grid-cols-2 flex-col gap-5 ">
-      <div class="flex flex-col col-span-2 gap-4"
-        v-if="((role == 'HOP' || role == 'HOD') && requeststatus == 'WaitForCompanyManger' && RequestisFinished != true)">
+  <MainModal
+    styles="w-[40vw] h-[70vh]"
+    text="Order details"
+    v-if="isInfoModalOpen"
+    @close="isInfoModalOpen = false">
+    <div class="grid grid-cols-2 flex-col gap-5">
+      <div
+        class="flex flex-col col-span-2 gap-4"
+        v-if="
+          (role == 'HOP' || role == 'HOD') &&
+          requeststatus == 'WaitForCompanyManger' &&
+          RequestisFinished != true
+        ">
         <div class="flex flex-col gap-2">
           <label class="text-xl text-primary">Note</label>
           <Field
             class="border border-on_background_variant bg-background rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300"
-            name="lastInfo" v-model="lastInfo" type="textarea" as="textarea">
+            name="lastInfo"
+            v-model="lastInfo"
+            type="textarea"
+            as="textarea">
           </Field>
-          <ErrorMessage class="text-red-600 text-lg" name="lastInfo" component="div"></ErrorMessage>
+          <ErrorMessage
+            class="text-red-600 text-lg"
+            name="lastInfo"
+            component="div"></ErrorMessage>
         </div>
         <div class="flex gap-4 w-full col-span-2">
-
-          <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForCFO')"
-            class="bg-green-600 border-none" text="Approval"></MainButton>
-
-          <MainButton v-if="role == 'CFO'" @click="editStatusRequest('ApprovalFromCFO')"
-            class="bg-green-600 border-none" text="Approval"></MainButton>
-
-          <MainButton v-if="role == 'BDM'" @click="editStatusRequest('Wait')" class="bg-green-600 border-none"
+          <MainButton
+            v-if="role == 'Accounter'"
+            @click="editStatusRequest('WaitForCFO')"
+            class="bg-green-600 border-none"
             text="Approval"></MainButton>
 
-          <MainButton v-if="(role == 'HOP' || role == 'HOD')" @click="editStatusRequest('Wait')"
-            class="bg-green-600 border-none" text="Approval">
+          <MainButton
+            v-if="role == 'CFO'"
+            @click="editStatusRequest('ApprovalFromCFO')"
+            class="bg-green-600 border-none"
+            text="Approval"></MainButton>
+
+          <MainButton
+            v-if="role == 'BDM'"
+            @click="editStatusRequest('Wait')"
+            class="bg-green-600 border-none"
+            text="Approval"></MainButton>
+
+          <MainButton
+            v-if="role == 'HOP' || role == 'HOD'"
+            @click="editStatusRequest('Wait')"
+            class="bg-green-600 border-none"
+            text="Approval">
           </MainButton>
 
-          <MainButton v-if="role == 'Accounter'" @click="editStatusRequest('WaitForEdit')"
-            class="bg-orange-600 border-none" text="Return for modification"></MainButton>
+          <MainButton
+            v-if="role == 'Accounter'"
+            @click="editStatusRequest('WaitForEdit')"
+            class="bg-orange-600 border-none"
+            text="Return for modification"></MainButton>
           <!-- || requeststatus != 'WaitForCompanyManger' -->
-          <MainButton class="bg-red-600 border-none" v-if="(role != 'SupUser')" @click="editStatusRequest('Reject')"
+          <MainButton
+            class="bg-red-600 border-none"
+            v-if="role != 'SupUser'"
+            @click="editStatusRequest('Reject')"
             text="Reject"></MainButton>
-
         </div>
       </div>
 
-      <div class="flex flex-col gap-2 text-red-600  bg-white border roundedshadow-sm  p-3 ">
+      <div
+        class="flex flex-col gap-2 text-red-600 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary text-red-600">Note</label>
-        <hr>
+        <hr />
         <p class="text-xl text-primary text-red-600">
           {{ requestInfo.lastInfo }}
         </p>
       </div>
 
-      <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3 ">
-        <label class="text-xl text-primary">Purpose of payment and details</label>
-        <hr>
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
+        <label class="text-xl text-primary"
+          >Purpose of payment and details</label
+        >
+        <hr />
         <p>{{ requestInfo.purposeOfPaymentAndDetails }}</p>
       </div>
 
-      <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Other details</label>
-        <hr>
+        <hr />
         <p>{{ requestInfo.otherInfo }}</p>
       </div>
-      <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Payment method </label>
-        <hr>
+        <hr />
         <p>{{ requestInfo.paymentMethod }}</p>
       </div>
-      <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3">
-        <label class="text-xl text-primary">Due date
-        </label>
-        <hr>
-        <p>{{ dayjs(requestInfo.dueDate).format('ddd, DD MMM YYYY') }} </p>
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
+        <label class="text-xl text-primary">Due date </label>
+        <hr />
+        <p>{{ dayjs(requestInfo.dueDate).format('ddd, DD MMM YYYY') }}</p>
       </div>
-      <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Invoice Date</label>
-        <hr>
-        <p>{{ dayjs(requestInfo.invoiceDate).format('ddd, DD MMM YYYY') }} </p>
+        <hr />
+        <p>{{ dayjs(requestInfo.invoiceDate).format('ddd, DD MMM YYYY') }}</p>
       </div>
-      <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Beneficary Name</label>
-        <hr>
+        <hr />
         <p>{{ requestInfo.beneficaryName }}</p>
       </div>
-      <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3">
+      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Payment Budget</label>
-        <hr>
+        <hr />
         <p v-if="requestInfo.paymentBudget == false">No</p>
-        <p v-else>yas</p>
+        <p v-else>yes</p>
       </div>
-      <div class="flex flex-col gap-2  bg-white border roundedshadow-sm  p-3" v-if="requestInfo.paymentBudget == false">
-        <label class="text-xl text-primary">Please Provide Reasonable justification</label>
-        <hr>
+      <div
+        class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3"
+        v-if="requestInfo.paymentBudget == false">
+        <label class="text-xl text-primary"
+          >Please Provide Reasonable justification</label
+        >
+        <hr />
         <p>{{ requestInfo.paymentBudgetIfFalseJustification }}</p>
       </div>
     </div>
   </MainModal>
 
-  <div class="flex xl:overflow-hidden xl:h-screen relative z-20" v-motion-fade>
+  <div
+    class="flex xl:overflow-hidden xl:h-screen relative z-20"
+    v-motion-fade>
     <DashboardSidebar class="hidden xl:block" />
     <div class="flex flex-col w-full">
       <DashboardNavBar path="Pending Orders" />
       <div class="flex flex-col px-4 xl:px-8 mt-32 xl:mt-8 gap-4">
-        <div class="flex flex-col xl:flex-row w-full xl:justify-between xl:items-center">
+        <div
+          class="flex flex-col xl:flex-row w-full xl:justify-between xl:items-center">
           <div class="grid grid-cols-2 xl:flex xl:flex-row gap-4 items-center">
             <div class="flex flex-col gap-2">
               <label class="text-primary">Full Name</label>
               <Field
                 class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
-                name="Password" v-model="searchform.fullName" type="text">
+                name="Password"
+                v-model="searchform.fullName"
+                type="text">
               </Field>
-              <ErrorMessage class="text-red-600 text-lg" name="Password" component="div"></ErrorMessage>
+              <ErrorMessage
+                class="text-red-600 text-lg"
+                name="Password"
+                component="div"></ErrorMessage>
             </div>
             <div class="flex flex-col gap-2">
               <label class="text-primary">Company Name</label>
               <Field
                 class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
-                name="Password" v-model="searchform.companyName" type="text">
+                name="Password"
+                v-model="searchform.companyName"
+                type="text">
               </Field>
-              <ErrorMessage class="text-red-600 text-lg" name="Password" component="div"></ErrorMessage>
+              <ErrorMessage
+                class="text-red-600 text-lg"
+                name="Password"
+                component="div"></ErrorMessage>
             </div>
             <div class="flex flex-col gap-2">
               <label class="text-primary">Order Number</label>
               <Field
                 class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
-                name="Password" v-model="searchform.requestNumber" type="text">
+                name="Password"
+                v-model="searchform.requestNumber"
+                type="text">
               </Field>
-              <ErrorMessage class="text-red-600 text-lg" name="Password" component="div"></ErrorMessage>
+              <ErrorMessage
+                class="text-red-600 text-lg"
+                name="Password"
+                component="div"></ErrorMessage>
             </div>
             <div class="flex flex-col gap-2">
               <label class="text-primary">Date</label>
               <Field
                 class="border border-on_background_variant rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
-                name="Password" v-model="searchform.date" type="date">
+                name="Password"
+                v-model="searchform.date"
+                type="date">
               </Field>
-              <ErrorMessage class="text-red-600 text-lg" name="Password" component="div"></ErrorMessage>
+              <ErrorMessage
+                class="text-red-600 text-lg"
+                name="Password"
+                component="div"></ErrorMessage>
             </div>
             <div class="flex flex-col gap-2">
               <label class="text-primary">Status</label>
               <Field
                 class="border border-on_background_variant bg-background rounded-full focus:outline-primary focus:outline-2 transition-all duration-300 h-10 w-48"
-                name="status" v-model="searchform.status" type="select" as="select">
+                name="status"
+                v-model="searchform.status"
+                type="select"
+                as="select">
                 <option value="">All</option>
                 <option value="Wait">Pending at Finance</option>
-                <option value="WaitForCompanyManger">Pending at Company Manager</option>
+                <option value="WaitForCompanyManger">
+                  Pending at Company Manager
+                </option>
                 <option value="Reject">Rejected</option>
                 <option value="WaitForEdit">Waiting Update</option>
                 <option value="WaitForCFO">Pending at CFO</option>
                 <option value="Finished">Completed</option>
               </Field>
-              <ErrorMessage class="text-red-600 text-lg" name="status" component="div"></ErrorMessage>
+              <ErrorMessage
+                class="text-red-600 text-lg"
+                name="status"
+                component="div"></ErrorMessage>
             </div>
-            <div class="bg-primary rounded-full p-2 self-end max-w-max" @click="search()">
+            <div
+              class="bg-primary rounded-full p-2 self-end max-w-max"
+              @click="search()">
               <PhMagnifyingGlass class="h-6 w-6 fill-on_primary" />
             </div>
           </div>
@@ -795,45 +1026,66 @@ const isInfoModalOpen = ref(false);
         </div>
         <!-- Table -->
 
-        <div class="overflow-x-auto xl:overflow-y-auto relative shadow-md rounded-xl h-full xl:h-[71vh] bg-background">
+        <div
+          class="overflow-x-auto xl:overflow-y-auto relative shadow-md rounded-xl h-full xl:h-[71vh] bg-background">
           <table class="w-full text-right text-on_background">
             <thead class="text-base text-on_primary bg-primary">
               <tr>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   #
                 </th>
                 <!-- <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
                   Picture or logo
                 </th> -->
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   Full Name
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   Company Name
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   Amount
                 </th>
 
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   Invoice Number
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   Order Number
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   Status
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4">
                   Added date
                 </th>
-                <th scope="col" class="xl:py-3 xl:px-6 py-2 px-4 rounded-tr-xl">
+                <th
+                  scope="col"
+                  class="xl:py-3 xl:px-6 py-2 px-4 rounded-tr-xl">
                   Options
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr class="bg-white border-b odd:bg-gray-200 even:bg-background text-sm" v-for="(item, index) in list"
+              <tr
+                class="bg-white border-b odd:bg-gray-200 even:bg-background text-sm"
+                v-for="(item, index) in list"
                 :key="item.id">
                 <td class="xl:py-3 xl:px-6 py-2 px-4 font-bold text-primary">
                   {{ index + 1 + paginationIndex }}
@@ -848,12 +1100,19 @@ const isInfoModalOpen = ref(false);
                   {{ item.companyName }}
                 </td>
 
-                <td class="xl:py-3 xl:px-6 py-2 px-4  flex justify-center align-middle h-[70px] items-center">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 flex justify-center align-middle h-[70px] items-center">
                   <h1
                     class="text-center xl:text-start bg-primary_container text-background max-w-max rounded-2xl px-2 py-2">
-                    {{ item.requestedAmount == "" ? item.requestedAmount :
-                        item.requestedAmount?.toString().match(/.{1,3}/g).join()
-                    }} {{ item.amountCurrency }}
+                    {{
+                      item.requestedAmount == ''
+                        ? item.requestedAmount
+                        : item.requestedAmount
+                            ?.toString()
+                            .match(/.{1,3}/g)
+                            .join()
+                    }}
+                    {{ item.amountCurrency }}
                   </h1>
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]">
@@ -862,28 +1121,44 @@ const isInfoModalOpen = ref(false);
                 <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]">
                   {{ item.requestNumber }}
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'Wait'">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.status == 'Wait'">
                   Pending at Finance
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForCompanyManger'">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.status == 'WaitForCompanyManger'">
                   Pending at Company Manager
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'Reject'">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.status == 'Reject'">
                   Rejected
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForEdit'">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.status == 'WaitForEdit'">
                   Waiting Update
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'ApprovalFromCFO'">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.status == 'ApprovalFromCFO'">
                   CFO Approved
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'Finished'">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.status == 'Finished'">
                   Completed
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForCFO'">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.status == 'WaitForCFO'">
                   Pending at CFO
                 </td>
-                <td class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]" v-if="item.status == 'WaitForBDM'">
+                <td
+                  class="xl:py-3 xl:px-6 py-2 px-4 max-w-[50ch]"
+                  v-if="item.status == 'WaitForBDM'">
                   Pending at BDM
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4">
@@ -891,20 +1166,24 @@ const isInfoModalOpen = ref(false);
                 </td>
                 <td class="xl:py-3 xl:px-6 py-2 px-4">
                   <div class="flex items-center gap-2">
-                    <PhPencil v-if="item.status == 'WaitForEdit'"
-                      class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer" @click="
+                    <PhPencil
+                      v-if="item.status == 'WaitForEdit'"
+                      class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer"
+                      @click="
                         editRequestInfo(index), (isEditModalOpen = true)
                       " />
-                    <PhEye class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer"
+                    <PhEye
+                      class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer"
                       @click="
                         showRequestInfo(index, item.status, item.id),
-                        (isInfoModalOpen = true)
+                          (isInfoModalOpen = true)
                       " />
-                    <PhFileText @click="
-                      attachmentmodel(index), (isUploadModalOpen = true)
-                    " class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer" />
+                    <PhFileText
+                      @click="
+                        attachmentmodel(index), (isUploadModalOpen = true)
+                      "
+                      class="w-6 h-6 fill-primary hover:scale-105 transition-all duration-300 cursor-pointer" />
                   </div>
-
                 </td>
               </tr>
             </tbody>
@@ -912,25 +1191,30 @@ const isInfoModalOpen = ref(false);
         </div>
 
         <!--Pag-->
-        <nav aria-label="Table navigation" class="flex justify-between items-center py-4">
-          <div class="flex gap-2 items-center bg-primary_container py-2 px-4 rounded-xl">
+        <nav
+          aria-label="Table navigation"
+          class="flex justify-between items-center py-4">
+          <div
+            class="flex gap-2 items-center bg-primary_container py-2 px-4 rounded-xl">
             <span class="font-bold text-sm text-background">{{
-                paginationIndex + 10 >= totalRecords
-                  ? totalRecords
-                  : paginationIndex + 10
+              paginationIndex + 10 >= totalRecords
+                ? totalRecords
+                : paginationIndex + 10
             }}</span>
             <span class="text-on_background">From</span>
             <span class="font-bold text-sm text-background">{{
-                totalRecords
+              totalRecords
             }}</span>
           </div>
           <ul class="flex items-center">
-            <button :disabled="paginationIndex <= 1"
+            <button
+              :disabled="paginationIndex <= 1"
               class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2 rounded-l-xl xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
               @click="previousPage">
               Previous
             </button>
-            <button :disabled="paginationIndex + 10 >= totalRecords"
+            <button
+              :disabled="paginationIndex + 10 >= totalRecords"
               class="flex items-center justify-center gap-2 cursor-pointer xl:text-sm text-base bold border-2 rounded-r-xl xl:px-4 xl:py-3 px-4 py-2 border-none bg-primary text-white shadow-lg transition-all duration-300 hover:opacity-80 disabled:opacity-75 disable:cursor-not-allowed hover:gap-4"
               @click="nextPage">
               Next

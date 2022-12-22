@@ -266,7 +266,7 @@ const deleteUser = async (value) => {
     showCancelButton: true,
     confirmButtonColor: '#ef4444',
     cancelButtonColor: '#213263',
-    confirmButtonText: 'yas، Deleted',
+    confirmButtonText: 'yes، Deleted',
     cancelButtonText: 'Close',
   }).then((result) => {
     if (result.isConfirmed) {
