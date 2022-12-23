@@ -4,5 +4,6 @@ import tabel from '../../components/table/table.vue';
 <template>
   <tabel
     page="Finished"
-    requestType="Finished" />
+    requestType="Finished"
+    :isSubUser="false" />
 </template>

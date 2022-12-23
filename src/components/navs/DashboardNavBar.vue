@@ -24,6 +24,8 @@ emitter.on('newNotify', (message) => {
     notifyTitle: message.notifyTitle,
     notifyBody: message.notifyBody,
   });
+
+  
   var audio = new Audio('../../../public/sound/notification.mp3'); // path to file
   audio.play();
 });

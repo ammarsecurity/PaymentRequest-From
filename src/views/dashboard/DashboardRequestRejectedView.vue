@@ -4,5 +4,6 @@ import tabel from '../../components/table/table.vue';
 <template>
   <tabel
     page="Reject"
-    requestType="Reject" />
+    requestType="Reject"
+    :isSubUser="false" />
 </template>

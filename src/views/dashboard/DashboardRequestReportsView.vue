@@ -5,5 +5,6 @@ import tabel from '../../components/table/table.vue';
   <tabel
     page="Request"
     requestType="All"
-    :isReport="true" />
+    :isReport="true"
+    :isSubUser="false" />
 </template>

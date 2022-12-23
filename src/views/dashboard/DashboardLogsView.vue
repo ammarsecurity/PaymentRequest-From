@@ -73,6 +73,13 @@
                 class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">
                 {{ item.fullName }}
               </h3>
+              <h3
+                class="flex items-center mb-1 text-lg font-semibold text-gray-900 dark:text-white">
+                Form -
+                {{ getRoleName(item.fromLoction) }} / To -
+                {{ getRoleName(item.loction) }} &nbsp
+                <span class="text-red-600"> (Current Location)</span>
+              </h3>
               <time
                 class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"></time>
               {{ dates(item.date) }}
@@ -82,7 +89,7 @@
               </p>
               <a
                 v-if="item.isFinished"
-                @click="print(item.id)"
+                @click="print(item.requestId)"
                 class="inline-flex items-center py-2 px-4 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-200 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700"
                 ><svg
                   class="mr-2 w-4 h-4"
@@ -104,7 +111,8 @@
   </div>
 </template>
 <script>
-import { axiosInstance } from '@/api/axiosInstance';
+import { axiosInstance, baseURL } from '@/api/axiosInstance.js';
+
 import dayjs from 'dayjs';
 import printJS from 'print-js';
 export default {
@@ -117,6 +125,30 @@ export default {
     };
   },
   methods: {
+    getRoleName(item) {
+      //  Accounter = 1 ,
+      //   User = 2 ,
+      //   SupUser = 3 ,
+      //   CFO = 4 ,
+      //   HOP = 5 ,
+      //   HOD = 6 ,
+      //   BDM = 7 ,
+      if (item == 2) {
+        return 'Comapny Manager';
+      } else if (item == 1) {
+        return 'Finance';
+      } else if (item == 3) {
+        return 'Requester';
+      } else if (item == 4) {
+        return 'CFO';
+      } else if (item == 5) {
+        return 'HOP';
+      } else if (item == 6) {
+        return 'HOD';
+      } else if (item == 7) {
+        return 'BDM';
+      }
+    },
     dates(x) {
       return dayjs(x).format('DD MMM YYYY - hh:mm');
     },

@@ -13,6 +13,7 @@ const props = defineProps({
   page: String,
   requestType: String,
   isReport: Boolean,
+  isSubUser: Boolean,
 });
 
 const validationSchemaEdit = ref({
@@ -222,7 +223,6 @@ const submit = async (value) => {
   return;
 };
 const isNumber = async (value) => {
-  alert('gfddfg');
   evt = evt ? evt : window.event;
   var charCode = evt.which ? evt.which : evt.keyCode;
   if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
@@ -421,7 +421,7 @@ const pageNumber = ref(1);
 
 const getRequest = () => {
   isLoading.value = true;
-  if (props.requestType == 'All') {
+  if (props.requestType == 'All' && props.isSubUser == false) {
     axiosInstance
       .get(
         `Main/GetRequset?userRequest=${isUser}&PageNumber=${
@@ -454,10 +454,35 @@ const getRequest = () => {
           cancelButtonText: 'Close',
         });
       });
-  } else {
+  } else if (props.requestType != 'All' && props.isSubUser == false) {
     axiosInstance
       .get(
         `Main/GetRequset?userRequest=${isUser}&PageNumber=${pageNumber.value}&PageSize=${pageSize.value}&date=${searchform.value.date}&companyName=${searchform.value.companyName}&requestNumber=${searchform.value.requestNumber}&status=${props.requestType}&fullName=${searchform.value.fullName}`
+      )
+      .then(({ data }) => {
+        list.value = data.data;
+        pageNumber.value = data.pageNumber;
+        pageSize.value = data.pageSize;
+        totalRecords.value = data.totalRecords;
+        isLoading.value = false;
+      })
+      .catch((error) => {
+        isLoading.value = false;
+        console.log(error);
+        isLoading.value = false;
+        Swal.fire({
+          title: 'Error',
+          text: 'An information error has occurred',
+          icon: 'error',
+          showCancelButton: true,
+          cancelButtonColor: '#213263',
+          cancelButtonText: 'Close',
+        });
+      });
+  } else if (props.requestType == 'All' && props.isSubUser == true) {
+    axiosInstance
+      .get(
+        `Main/GetSupUserRequest?userRequest=${isUser}&PageNumber=${pageNumber.value}&PageSize=${pageSize.value}&date=${searchform.value.date}&companyName=${searchform.value.companyName}&requestNumber=${searchform.value.requestNumber}&status=${searchform.value.status}&fullName=${searchform.value.fullName}`
       )
       .then(({ data }) => {
         list.value = data.data;
@@ -528,7 +553,6 @@ const editRequestInfo = (index) => {
   editRequest.value.beneficaryName = info.beneficaryName;
   editRequest.value.id = info.id;
   editRequest.value.companyId = info.companyId;
-  editRequest.value.requestLoction = info.requestLoction;
 };
 
 const requestInfo = ref({
@@ -541,6 +565,21 @@ const requestInfo = ref({
   paymentBudget: '',
   requestLoction: '',
   companyId: '',
+  phoneNumber: '',
+  requestLoction: '',
+  paymentMethod: '',
+  paymentBudgetIfFalseJustification: '',
+  fullName: '',
+  phoneNumber: '',
+  companyName: '',
+  requestedAmount: '',
+  amountCurrency: '',
+  invoiceNumber: '',
+  requestNumber: '',
+  status: '',
+  requestDate: '',
+  id: '',
+  email: '',
 });
 
 const RequestisFinished = ref('');
@@ -562,6 +601,19 @@ const showRequestInfo = (index, status, id, isFinished) => {
     (requestInfo.value.lastInfo = info.lastInfo),
     (requestInfo.value.paymentMethod = info.paymentMethod);
   requestInfo.value.companyId = info.companyId;
+  requestInfo.value.phoneNumber = info.phoneNumber;
+  requestInfo.value.companyName = info.companyName;
+  requestInfo.value.requestLoction = info.requestLoction;
+  requestInfo.value.phoneNumber = info.phoneNumber;
+  requestInfo.value.requestedAmount = info.requestedAmount;
+  requestInfo.value.amountCurrency = info.amountCurrency;
+  requestInfo.value.invoiceNumber = info.invoiceNumber;
+  requestInfo.value.requestNumber = info.requestNumber;
+  requestInfo.value.status = info.status;
+  requestInfo.value.requestDate = info.requestDate;
+  requestInfo.value.id = info.id;
+  requestInfo.value.fullName = info.fullName;
+  requestInfo.value.email = info.email;
 };
 
 const attachmentmodel = (index) => {
@@ -1034,26 +1086,9 @@ const attachmentmodel = (index) => {
           component="div"></ErrorMessage>
       </div>
 
-      <div class="flex flex-col gap-2">
-        <label class="text-xl text-primary">To</label>
-        <Field
-          class="border border-on_background_variant bg-background rounded-full px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300 xl:w-[30rem]"
-          name="requestLoction"
-          v-model="editRequest.requestLoction"
-          type="select"
-          as="select">
-          <option :value="1">Accounter</option>
-          <option :value="7">Business department manager (BDM)</option>
-        </Field>
-        <ErrorMessage
-          class="text-red-600 text-lg"
-          name="requestLoction"
-          component="div"></ErrorMessage>
-      </div>
-
       <MainButton
         class="col-span-2 mt-5"
-        text="Add"
+        text="Edit"
         type="submit" />
     </Form>
   </MainModal>
@@ -1125,13 +1160,64 @@ const attachmentmodel = (index) => {
     text="Request details"
     v-if="isInfoModalOpen"
     @close="isInfoModalOpen = false">
-    <div class="grid grid-cols-2 flex-col gap-5">
+    <div class="grid grid-col-1 flex-col gap-5">
       <div
         class="flex flex-col col-span-2 gap-4"
         v-if="RequestisFinished != true">
         <div
           class="flex flex-col gap-2"
-          v-if="role != 'SupUser' && role != 'HOP' && role != 'HOD'">
+          v-if="role == 'Accounter' && requeststatus == 'Wait'">
+          <label class="text-xl text-primary">Note</label>
+          <Field
+            class="border border-on_background_variant bg-background rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300"
+            name="lastInfo"
+            v-model="lastInfo"
+            type="textarea"
+            as="textarea">
+          </Field>
+          <ErrorMessage
+            class="text-red-600 text-lg"
+            name="lastInfo"
+            component="div"></ErrorMessage>
+        </div>
+        <div
+          class="flex flex-col gap-2"
+          v-if="role == 'CFO' && requeststatus == 'WaitForCFO'">
+          <label class="text-xl text-primary">Note</label>
+          <Field
+            class="border border-on_background_variant bg-background rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300"
+            name="lastInfo"
+            v-model="lastInfo"
+            type="textarea"
+            as="textarea">
+          </Field>
+          <ErrorMessage
+            class="text-red-600 text-lg"
+            name="lastInfo"
+            component="div"></ErrorMessage>
+        </div>
+        <div
+          class="flex flex-col gap-2"
+          v-if="role == 'BDM' && requeststatus == 'WaitForBDM'">
+          <label class="text-xl text-primary">Note</label>
+          <Field
+            class="border border-on_background_variant bg-background rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300"
+            name="lastInfo"
+            v-model="lastInfo"
+            type="textarea"
+            as="textarea">
+          </Field>
+          <ErrorMessage
+            class="text-red-600 text-lg"
+            name="lastInfo"
+            component="div"></ErrorMessage>
+        </div>
+        <div
+          class="flex flex-col gap-2"
+          v-if="
+            (role == 'HOP' || role == 'HOD') &&
+            requeststatus == 'WaitForCompanyManger'
+          ">
           <label class="text-xl text-primary">Note</label>
           <Field
             class="border border-on_background_variant bg-background rounded-2xl px-4 py-2 focus:outline-primary focus:outline-2 transition-all duration-300"
@@ -1147,50 +1233,141 @@ const attachmentmodel = (index) => {
         </div>
         <div class="flex gap-4 w-full col-span-2">
           <MainButton
-            v-if="role == 'Accounter'"
+            v-if="role == 'Accounter' && requeststatus == 'Wait'"
             @click="editStatusRequest('WaitForCFO')"
             class="bg-green-600 border-none"
             text="Approval"></MainButton>
 
           <MainButton
-            v-if="role == 'CFO'"
+            v-if="role == 'CFO' && requeststatus == 'WaitForCFO'"
             @click="editStatusRequest('ApprovalFromCFO')"
             class="bg-green-600 border-none"
             text="Approval"></MainButton>
 
           <MainButton
-            v-if="role == 'BDM'"
+            v-if="role == 'BDM' && requeststatus == 'WaitForBDM'"
             @click="editStatusRequest('Wait')"
             class="bg-green-600 border-none"
             text="Approval"></MainButton>
 
           <MainButton
-            v-if="role == 'Accounter'"
+            v-if="
+              (role == 'HOP' || role == 'HOD') &&
+              requeststatus == 'WaitForCompanyManger'
+            "
+            @click="editStatusRequest('Wait')"
+            class="bg-green-600 border-none"
+            text="Approval"></MainButton>
+
+          <MainButton
+            v-if="role == 'Accounter' && requeststatus == 'Wait'"
             @click="editStatusRequest('WaitForEdit')"
             class="bg-orange-600 border-none"
             text="Return for modification"></MainButton>
 
+          <!-- <MainButton
+            class="bg-red-600 border-none"
+            v-if="role == 'CFO' || 'Accounter' || 'BDM'"
+            @click="editStatusRequest('Reject')"
+            text="Reject"></MainButton> -->
+
           <MainButton
             class="bg-red-600 border-none"
             v-if="
-              (role != 'HOP' || 'HOD') &&
-              (role == 'CFO' || role == 'Accounter' || role == 'BDM')
+              (role == 'HOP' || role == 'HOD') &&
+              requeststatus == 'WaitForCompanyManger'
             "
+            @click="editStatusRequest('Reject')"
+            text="Reject"></MainButton>
+
+          <MainButton
+            class="bg-red-600 border-none"
+            v-if="role == 'Accounter' && requeststatus == 'Wait'"
+            @click="editStatusRequest('Reject')"
+            text="Reject"></MainButton>
+
+          <MainButton
+            class="bg-red-600 border-none"
+            v-if="role == 'BDM' && requeststatus == 'WaitForBDM'"
+            @click="editStatusRequest('Reject')"
+            text="Reject"></MainButton>
+
+          <MainButton
+            class="bg-red-600 border-none"
+            v-if="role == 'CFO' && requeststatus == 'WaitForCFO'"
             @click="editStatusRequest('Reject')"
             text="Reject"></MainButton>
         </div>
       </div>
-
+    </div>
+    <div class="grid grid-cols-3 flex-col gap-5">
       <div
-        class="flex flex-col gap-2 text-red-600 bg-white border roundedshadow-sm p-3">
+        class="col-span-12 text-red-600 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary text-red-600">Note</label>
         <hr />
         <p class="text-xl text-primary text-red-600">
           {{ requestInfo.lastInfo }}
         </p>
       </div>
+      <!-- requestInfo.value.invoiceNumber = info.invoiceNumber;
+  requestInfo.value.requestNumber = info.requestNumber; -->
+      <div class="col-span-6 bg-white border roundedshadow-sm p-3">
+        <label class="text-xl text-primary text-red-600">Status</label>
+        <hr />
 
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
+        <p
+          class="text-xl text-primary"
+          v-if="requestInfo.status == 'Finished'">
+          Completed
+        </p>
+        <p
+          class="text-xl text-primary"
+          v-if="requestInfo.status == 'ApprovalFromCFO'">
+          CFO Approved
+        </p>
+        <p
+          class="text-xl text-primary"
+          v-if="requestInfo.status == 'WaitForEdit'">
+          Waiting Update
+        </p>
+        <p
+          class="text-xl text-primary"
+          v-if="requestInfo.status == 'Reject'">
+          Rejected
+        </p>
+        <p
+          class="text-xl text-primary"
+          v-if="requestInfo.status == 'WaitForCompanyManger'">
+          Pending at Company Manager
+        </p>
+        <p
+          class="text-xl text-primary"
+          v-if="requestInfo.status == 'Wait'">
+          Pending at Finance
+        </p>
+      </div>
+      <div class="col-span-3 bg-white border roundedshadow-sm p-3">
+        <label class="text-xl text-primary text-red-600">Request Number</label>
+        <hr />
+
+        <p class="text-xl text-primary">
+          {{ requestInfo.requestNumber }}
+        </p>
+      </div>
+      <div class="col-span-3 bg-white border roundedshadow-sm p-3">
+        <label class="text-xl text-primary text-red-600">Invoice Number</label>
+        <hr />
+
+        <p class="text-xl text-primary">
+          {{ requestInfo.invoiceNumber }}
+        </p>
+      </div>
+      <div class="col-span-12 gap-2 bg-white border roundedshadow-sm p-3">
+        <label class="text-xl text-primary">Due Date</label>
+        <hr />
+        <p>{{ dayjs(requestInfo.dueDate).format('ddd, DD MMM YYYY') }}</p>
+      </div>
+      <div class="col-span-12 gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary"
           >Purpose of payment and details</label
         >
@@ -1198,43 +1375,42 @@ const attachmentmodel = (index) => {
         <p>{{ requestInfo.purposeOfPaymentAndDetails }}</p>
       </div>
 
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
+      <div class="col-span-12 gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Request details</label>
         <hr />
         <p>{{ requestInfo.otherInfo }}</p>
       </div>
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
+      <div class="col-span-12 gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Payment method </label>
         <hr />
         <p>{{ requestInfo.paymentMethod }}</p>
       </div>
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
-        <label class="text-xl text-primary">Due date</label>
+
+      <div class="col-span-6 gap-2 bg-white border roundedshadow-sm p-3">
+        <label class="text-xl text-primary">Request Date</label>
         <hr />
-        <p>{{ dayjs(requestInfo.dueDate).format('ddd, DD MMM YYYY') }}</p>
+        <p>{{ dayjs(requestInfo.requestDate).format('ddd, DD MMM YYYY') }}</p>
       </div>
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
+      <div class="col-span-6 gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Invoice Date</label>
         <hr />
         <p>{{ dayjs(requestInfo.invoiceDate).format('ddd, DD MMM YYYY') }}</p>
       </div>
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
+      <div class="col-span-12 gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Beneficary Name</label>
         <hr />
         <p>{{ requestInfo.beneficaryName }}</p>
       </div>
-      <div class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3">
+      <div class="col-span-12 gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Payment Budget</label>
         <hr />
         <p v-if="requestInfo.paymentBudget == false">No</p>
         <p v-else>yes</p>
       </div>
       <div
-        class="flex flex-col gap-2 bg-white border roundedshadow-sm p-3"
+        class="col-span-12 gap-2 bg-white border roundedshadow-sm p-3"
         v-if="requestInfo.paymentBudget == false">
-        <label class="text-xl text-primary"
-          >Please Provide Reasonable justification</label
-        >
+        <label class="text-xl text-red-600">Justification</label>
         <hr />
         <p>{{ requestInfo.paymentBudgetIfFalseJustification }}</p>
       </div>
@@ -1246,7 +1422,7 @@ const attachmentmodel = (index) => {
     v-motion-fade>
     <DashboardSidebar class="hidden xl:block" />
     <div class="flex flex-col w-full">
-      <DashboardNavBar path="Pending Orders" />
+      <DashboardNavBar path="Request Table" />
       <div class="flex flex-col px-4 xl:px-8 mt-32 xl:mt-8 gap-4">
         <div
           class="flex flex-col xl:flex-row w-full xl:justify-between xl:items-center">

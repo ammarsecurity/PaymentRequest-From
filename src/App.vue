@@ -11,9 +11,6 @@ import emitter from "tiny-emitter/instance";
 onMounted(async () => {
 
   const signalr = useSignalR();
-
-
-
   const invokeSignalr = async (comeBack = false) => {
     await signalr.invoke('AddUserToOnlineList', localStorage.getItem("role"), localStorage.getItem("userId"));
     if (comeBack) {
