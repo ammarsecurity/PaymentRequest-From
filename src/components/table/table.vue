@@ -566,11 +566,9 @@ const requestInfo = ref({
   requestLoction: '',
   companyId: '',
   phoneNumber: '',
-  requestLoction: '',
   paymentMethod: '',
   paymentBudgetIfFalseJustification: '',
   fullName: '',
-  phoneNumber: '',
   companyName: '',
   requestedAmount: '',
   amountCurrency: '',
@@ -1156,7 +1154,7 @@ const attachmentmodel = (index) => {
   </MainModal>
 
   <MainModal
-    styles="w-[40vw] h-[70vh]"
+    styles="w-[70vw] h-[70vh]"
     text="Request details"
     v-if="isInfoModalOpen"
     @close="isInfoModalOpen = false">
@@ -1300,7 +1298,7 @@ const attachmentmodel = (index) => {
         </div>
       </div>
     </div>
-    <div class="grid grid-cols-3 flex-col gap-5">
+    <div class="grid grid-cols-12 flex-col gap-5">
       <div
         class="col-span-12 text-red-600 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary text-red-600">Note</label>
@@ -1311,7 +1309,7 @@ const attachmentmodel = (index) => {
       </div>
       <!-- requestInfo.value.invoiceNumber = info.invoiceNumber;
   requestInfo.value.requestNumber = info.requestNumber; -->
-      <div class="col-span-6 bg-white border roundedshadow-sm p-3">
+      <div class="col-span-3 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary text-red-600">Status</label>
         <hr />
 
@@ -1362,11 +1360,33 @@ const attachmentmodel = (index) => {
           {{ requestInfo.invoiceNumber }}
         </p>
       </div>
-      <div class="col-span-12 gap-2 bg-white border roundedshadow-sm p-3">
-        <label class="text-xl text-primary">Due Date</label>
+      <div class="col-span-3 bg-white border roundedshadow-sm p-3">
+        <label class="text-xl text-primary text-red-600">Amount Request</label>
         <hr />
-        <p>{{ dayjs(requestInfo.dueDate).format('ddd, DD MMM YYYY') }}</p>
+
+        <p class="text-xl text-primary">
+          {{
+                      requestInfo.requestedAmount == ''
+                        ? requestInfo.requestedAmount
+                        : requestInfo.requestedAmount
+                            ?.toString()
+                            .match(/.{1,3}/g)
+                            .join()
+                    }}
+                    {{ requestInfo.amountCurrency }}
+        </p>
       </div>
+
+      <div class="col-span-12 gap-2 bg-white border roundedshadow-sm p-3">
+        <label class="text-xl text-primary">Requester Info</label>
+        <hr />
+        <p>FullName : <span>{{requestInfo.fullName}}</span></p>
+        <p>Company Name : <span>{{requestInfo.companyName}}</span></p>
+        <p>PhoneNumber : <span>{{requestInfo.phoneNumber}}</span></p>
+        <p>Email : <span>{{requestInfo.email}}</span></p>
+      </div>
+
+  
       <div class="col-span-12 gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary"
           >Purpose of payment and details</label
@@ -1385,13 +1405,17 @@ const attachmentmodel = (index) => {
         <hr />
         <p>{{ requestInfo.paymentMethod }}</p>
       </div>
-
-      <div class="col-span-6 gap-2 bg-white border roundedshadow-sm p-3">
+      <div class="col-span-4 gap-2 bg-white border roundedshadow-sm p-3">
+        <label class="text-xl text-primary">Due Date</label>
+        <hr />
+        <p>{{ dayjs(requestInfo.dueDate).format('ddd, DD MMM YYYY') }}</p>
+      </div>
+      <div class="col-span-4 gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Request Date</label>
         <hr />
         <p>{{ dayjs(requestInfo.requestDate).format('ddd, DD MMM YYYY') }}</p>
       </div>
-      <div class="col-span-6 gap-2 bg-white border roundedshadow-sm p-3">
+      <div class="col-span-4 gap-2 bg-white border roundedshadow-sm p-3">
         <label class="text-xl text-primary">Invoice Date</label>
         <hr />
         <p>{{ dayjs(requestInfo.invoiceDate).format('ddd, DD MMM YYYY') }}</p>

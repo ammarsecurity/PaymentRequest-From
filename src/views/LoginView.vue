@@ -53,7 +53,7 @@ const login = () => {
         <img class="w-[300px]" src="/images/logos/logo.png" alt="" />
       </a>
       <h1 class="text-primary dark:text-primary_dark text-3xl max-w-[50ch] leading-[1.5em] text-center font-bold">
-        Log in to the control panel
+        Login to the payment automation system
       </h1>
       <Form class="flex flex-col item gap-4" dir="rtl" :validationSchema="validationSchema" @submit="login">
         <!-- Username -->
