@@ -553,6 +553,7 @@ const editRequestInfo = (index) => {
   editRequest.value.beneficaryName = info.beneficaryName;
   editRequest.value.id = info.id;
   editRequest.value.companyId = info.companyId;
+  editRequest.value.requestLoction = info.requestLoction;
 };
 
 const requestInfo = ref({
